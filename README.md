@@ -1,12 +1,13 @@
 # Cortex-MCP (`cortex-mcp`)
 
 [![CI](https://github.com/codesphere-u/cortex-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/codesphere-u/cortex-mcp/actions/workflows/ci.yml)
+[![Release v1.1.0](https://img.shields.io/badge/release-v1.1.0-blue.svg)](https://github.com/codesphere-u/cortex-mcp/releases/tag/v1.1.0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/downloads/)
 [![MCP Spec](https://img.shields.io/badge/MCP-JSON--RPC%202.0-7c3aed.svg)](https://modelcontextprotocol.io/)
 [![Zero Cloud Dependencies](https://img.shields.io/badge/dependencies-zero%20external%20runtime-10b981.svg)](#architecture)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**Local-First Bi-Temporal Knowledge Graph, Cross-Agent Persistent Memory & Token-Budgeted Context Compiler MCP Server for AI Coding Agents.**
+**Local-First Bi-Temporal Knowledge Graph, Cross-Agent Persistent Memory, Contradiction Auditor, `TruthGate` Citation Bundle Exporter & Token-Budgeted Context Compiler MCP Server for AI Coding Agents.**
 
 ---
 
@@ -142,6 +143,28 @@ Add `cortex-mcp` to your agent's `mcp_config.json` (or `.cursor/mcp.json` / `cla
 | `memory_query_entity` | Inspect an entity's active facts, superseded historical facts, related episodes, and K-hop ego-graph neighborhood. |
 | `memory_time_travel` | Query the entire knowledge graph as of any historical ISO-8601 UTC timestamp (`as_of`). |
 | `memory_verify_integrity` | Verify canonical SHA-256 hashes across all facts and episodes and compute the graph Merkle root digest. |
+| `cortex_audit_contradictions` | Scan active facts for unresolved logical contradictions (negation polarity inversions, antonym objects, predicate alias collisions, or unsuperseded multi-value drift) with optional `auto_resolve=True`. |
+
+### `v1.1.0` Features: Contradiction Auditor & `TruthGate` Citation Exporter
+
+```bash
+# 1. Audit active facts in the bi-temporal graph for logical/polarity contradictions
+cortex-mcp audit-contradictions --json
+
+# 2. Export compiled context packets as a TruthGate-compatible SourceDocument JSON bundle
+cortex-mcp export-sources --query "auth_service uses_token_format" --output sources.json
+```
+
+```python
+from cortex_mcp import audit_contradictions, export_truthgate_sources
+
+# Detect and auto-resolve cross-agent predicate alias or polarity conflicts
+report = audit_contradictions(graph, auto_resolve=True)
+print(report.summary_markdown)
+
+# Export active facts with temporal provenance & SHA-256 Merkle root for codesphere-u/truthgate
+sources = export_truthgate_sources(graph, query="payment_ledger isolation_level")
+```
 
 ### Exposed MCP Resources & Prompts
 
@@ -198,7 +221,7 @@ python -m cortex_mcp.cli benchmark
 pytest -v
 ```
 
-All **67 tests** validate bi-temporal supersession chains, point-in-time queries, K-hop graph traversal, token-budget compliance, cryptographic tamper detection, JSON-RPC 2.0 MCP protocol compliance, and CLI subcommands.
+All **84 tests** validate bi-temporal supersession chains, semantic & polarity contradiction auditing, `TruthGate` `SourceDocument` citation bundle export, point-in-time queries, K-hop graph traversal, token-budget compliance, cryptographic tamper detection, JSON-RPC 2.0 MCP protocol compliance, and CLI subcommands.
 
 ---
 

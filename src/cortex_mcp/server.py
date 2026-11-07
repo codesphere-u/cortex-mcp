@@ -12,11 +12,13 @@ import sys
 from typing import Any, Dict, IO, List, Optional, Union
 
 from cortex_mcp.compiler import ContextCompiler
+from cortex_mcp.contradictions import audit_contradictions
 from cortex_mcp.graph import BiTemporalMemoryGraph, VALID_EPISODE_CATEGORIES
+from cortex_mcp.grounding_export import export_truthgate_sources
 
 MCP_PROTOCOL_VERSION = "2024-11-05"
 SERVER_NAME = "cortex-mcp"
-SERVER_VERSION = "1.0.0"
+SERVER_VERSION = "1.1.0"
 
 # Standard JSON-RPC 2.0 error codes
 PARSE_ERROR = -32700
@@ -190,6 +192,29 @@ class CortexMCPServer:
                     "properties": {},
                 },
             },
+            {
+                "name": "cortex_audit_contradictions",
+                "description": (
+                    "Scan active facts in the bi-temporal graph to detect unresolved logical "
+                    "contradictions (negation polarity inversions, antonym objects, predicate "
+                    "alias collisions, or unsuperseded multi-value drift) and recommend or apply "
+                    "supersession resolutions."
+                ),
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "as_of": {
+                            "type": "string",
+                            "description": "Optional ISO-8601 timestamp to audit active facts at a historical point.",
+                        },
+                        "auto_resolve": {
+                            "type": "boolean",
+                            "default": False,
+                            "description": "If true, automatically supersedes the older/lower-confidence conflicting fact.",
+                        },
+                    },
+                },
+            },
         ]
 
     def get_resource_definitions(self) -> List[Dict[str, Any]]:
@@ -307,6 +332,14 @@ class CortexMCPServer:
         if name == "memory_verify_integrity":
             report = self.graph.verify_integrity()
             return self._tool_response(report)
+
+        if name == "cortex_audit_contradictions":
+            audit_report = audit_contradictions(
+                self.graph,
+                as_of=arguments.get("as_of"),
+                auto_resolve=bool(arguments.get("auto_resolve", False)),
+            )
+            return self._tool_response(audit_report.to_dict())
 
         raise KeyError(f"Unknown tool: {name}")
 

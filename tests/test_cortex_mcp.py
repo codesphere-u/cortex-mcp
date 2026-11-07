@@ -477,6 +477,7 @@ def test_mcp_tools_list_exposes_six_tools() -> None:
         "memory_query_entity",
         "memory_time_travel",
         "memory_verify_integrity",
+        "cortex_audit_contradictions",
     ]
 
 
@@ -752,7 +753,7 @@ def test_mcp_stdio_stream_and_parse_errors() -> None:
     assert len(output_lines) == 3
     assert output_lines[0]["error"]["code"] == PARSE_ERROR
     assert output_lines[1]["id"] == 1 and output_lines[1]["result"] == {}
-    assert output_lines[2]["id"] == 2 and len(output_lines[2]["result"]["tools"]) == 6
+    assert output_lines[2]["id"] == 2 and len(output_lines[2]["result"]["tools"]) == 7
 
 
 # ============================================================================

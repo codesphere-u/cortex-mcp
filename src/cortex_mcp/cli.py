@@ -17,7 +17,9 @@ import time
 from typing import Any, Dict, List, Optional, Sequence
 
 from cortex_mcp.compiler import ContextCompiler
+from cortex_mcp.contradictions import audit_contradictions
 from cortex_mcp.graph import BiTemporalMemoryGraph
+from cortex_mcp.grounding_export import export_truthgate_sources
 from cortex_mcp.server import CortexMCPServer
 
 
@@ -495,6 +497,52 @@ def build_parser() -> argparse.ArgumentParser:
         help="Pre-populate the server with the demo engineering memory graph.",
     )
 
+    audit_parser = subparsers.add_parser(
+        "audit-contradictions",
+        help="Scan active facts in the bi-temporal graph for logical/polarity contradictions.",
+    )
+    audit_parser.add_argument(
+        "--storage",
+        type=str,
+        default=None,
+        help="Optional path to persistent JSON knowledge graph file.",
+    )
+    audit_parser.add_argument(
+        "--auto-resolve",
+        action="store_true",
+        help="Automatically supersede the older or lower-confidence conflicting fact.",
+    )
+    audit_parser.add_argument("--json", action="store_true", help="Emit JSON output.")
+
+    export_parser = subparsers.add_parser(
+        "export-sources",
+        help="Export compiled context or active bi-temporal facts as a TruthGate SourceDocument JSON bundle.",
+    )
+    export_parser.add_argument(
+        "--storage",
+        type=str,
+        default=None,
+        help="Optional path to persistent JSON knowledge graph file.",
+    )
+    export_parser.add_argument(
+        "--query",
+        type=str,
+        default=None,
+        help="Optional query to compile a token-budgeted context bundle before exporting.",
+    )
+    export_parser.add_argument(
+        "--max-tokens",
+        type=int,
+        default=1200,
+        help="Maximum token budget when --query is provided (default 1200).",
+    )
+    export_parser.add_argument(
+        "--output",
+        type=str,
+        default=None,
+        help="Optional file path to write the TruthGate SourceDocument JSON bundle.",
+    )
+
     return parser
 
 
@@ -517,6 +565,31 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             build_demo_scenario(graph)
         server = CortexMCPServer(graph=graph)
         server.serve_stdio()
+        return 0
+
+    if args.subcommand == "audit-contradictions":
+        storage_path = Path(args.storage) if args.storage else None
+        graph = BiTemporalMemoryGraph(storage_path=storage_path) if storage_path else build_demo_scenario()
+        report = audit_contradictions(graph, auto_resolve=args.auto_resolve)
+        if args.json:
+            print(json.dumps(report.to_dict(), indent=2, sort_keys=True))
+        else:
+            print(report.summary_markdown)
+        return 0 if report.clean else 1
+
+    if args.subcommand == "export-sources":
+        storage_path = Path(args.storage) if args.storage else None
+        graph = BiTemporalMemoryGraph(storage_path=storage_path) if storage_path else build_demo_scenario()
+        sources = export_truthgate_sources(
+            graph,
+            query=args.query,
+            max_tokens=args.max_tokens,
+            output_path=args.output,
+        )
+        if not args.output:
+            print(json.dumps(sources, indent=2, sort_keys=True))
+        else:
+            print(f"Exported {len(sources)} TruthGate SourceDocuments to {args.output}")
         return 0
 
     return 1
