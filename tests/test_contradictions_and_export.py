@@ -391,3 +391,13 @@ def test_export_truthgate_sources_includes_entity_items() -> None:
     sources = export_truthgate_sources(graph, bundle=bundle)
     assert any(s["source_id"] == "billing_engine" and s["metadata"]["item_type"] == "entity" for s in sources)
 
+
+
+def test_quickstart_example_runs_end_to_end():
+    import runpy
+    ns = runpy.run_path("examples/quickstart.py")
+    res = ns["main"]()
+    assert res["entities_count"] == 2
+    assert res["facts_count"] == 2
+    assert res["contradictions"] == 0
+    assert res["integrity_valid"] is True
