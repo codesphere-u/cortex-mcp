@@ -66,6 +66,16 @@ Modern AI coding agents (**Claude Code**, **Cursor**, **Windsurf**, **Antigravit
 
 ---
 
+## Install
+
+```bash
+pip install "git+https://github.com/codesphere-u/cortex-mcp.git@v1.1.0"
+# After the first PyPI release: pip install cortex-bitemporal-mcp  (installs the `cortex-mcp` CLI; import name: cortex_mcp)
+cortex-mcp --help
+```
+
+> The PyPI name `cortex-mcp` belongs to an unrelated project, so this package is published as `cortex-bitemporal-mcp`. The GitHub repository and CLI keep the `cortex-mcp` name.
+
 ## Quickstart
 
 ### 1. Installation

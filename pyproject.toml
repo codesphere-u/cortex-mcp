@@ -3,7 +3,7 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "cortex-mcp"
+name = "cortex-bitemporal-mcp"
 version = "1.1.0"
 description = "Local-First Bi-Temporal Knowledge Graph, Cross-Agent Persistent Memory & Token-Budgeted Context Compiler MCP Server for AI Coding Agents"
 readme = "README.md"
@@ -41,9 +41,16 @@ dev = [
 
 [project.scripts]
 cortex-mcp = "cortex_mcp.cli:main"
+cortex-bitemporal-mcp = "cortex_mcp.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[project.urls]
+Homepage = "https://github.com/codesphere-u/cortex-mcp"
+Repository = "https://github.com/codesphere-u/cortex-mcp"
+Issues = "https://github.com/codesphere-u/cortex-mcp/issues"
+Changelog = "https://github.com/codesphere-u/cortex-mcp/blob/main/CHANGELOG.md"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
