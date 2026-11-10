@@ -98,6 +98,14 @@ ANTONYM_PAIRS: Tuple[Tuple[str, str], ...] = (
     ("strict", "permissive"),
     ("safe", "unsafe"),
     ("secure", "insecure"),
+    ("deprecated", "supported"),
+    ("deprecated", "active"),
+    ("deprecated", "current"),
+    ("deprecated", "production"),
+    ("internal", "external"),
+    ("connected", "disconnected"),
+    ("persistent", "ephemeral"),
+    ("deterministic", "nondeterministic"),
 )
 
 PREDICATE_VERB_PREFIXES: Tuple[str, ...] = (
@@ -130,6 +138,11 @@ PREDICATE_SYNONYM_MAP: Dict[str, str] = {
     "signing_key": "signing_primitive",
     "signature_algorithm": "signing_primitive",
     "signing_algorithm": "signing_primitive",
+    "model_name": "foundation_model",
+    "llm": "foundation_model",
+    "base_model": "foundation_model",
+    "api_version": "protocol_version",
+    "wire_protocol": "protocol_version",
 }
 
 

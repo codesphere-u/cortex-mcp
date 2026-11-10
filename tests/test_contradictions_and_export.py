@@ -401,3 +401,52 @@ def test_quickstart_example_runs_end_to_end():
     assert res["facts_count"] == 2
     assert res["contradictions"] == 0
     assert res["integrity_valid"] is True
+
+
+def test_detect_lifecycle_antonym_contradictions() -> None:
+    """Verify that opposing lifecycle status (deprecated vs active/supported) flags an antonym conflict."""
+    graph = BiTemporalMemoryGraph()
+    graph.upsert_fact(
+        fact_id="fact_dep",
+        subject_id="service_v1",
+        predicate="lifecycle_state",
+        object_value="deprecated",
+        singular=False,
+    )
+    graph.upsert_fact(
+        fact_id="fact_act",
+        subject_id="service_v1",
+        predicate="lifecycle_state",
+        object_value="active",
+        singular=False,
+    )
+
+    report = audit_contradictions(graph)
+    assert report.clean is False
+    assert report.contradiction_count == 1
+    assert report.conflicts[0].kind == "antonym_object_conflict"
+
+
+def test_detect_foundation_model_synonym_contradictions() -> None:
+    """Verify that predicate aliases 'llm' and 'model_name' collide when values diverge."""
+    graph = BiTemporalMemoryGraph()
+    graph.upsert_fact(
+        fact_id="fact_llm1",
+        subject_id="summarizer",
+        predicate="llm",
+        object_value="claude-3-5-sonnet",
+        singular=False,
+    )
+    graph.upsert_fact(
+        fact_id="fact_llm2",
+        subject_id="summarizer",
+        predicate="model_name",
+        object_value="gpt-4o",
+        singular=False,
+    )
+
+    report = audit_contradictions(graph)
+    assert report.clean is False
+    assert report.contradiction_count == 1
+    assert report.conflicts[0].kind == "predicate_alias_conflict"
+
