@@ -465,7 +465,7 @@ def build_parser() -> argparse.ArgumentParser:
         prog="cortex-mcp",
         description="Cortex-MCP: Local-First Bi-Temporal Knowledge Graph & Context Compiler MCP Server.",
     )
-    subparsers = parser.add_subparsers(dest="subcommand", required=True)
+    subparsers = parser.add_subparsers(dest="subcommand", required=False)
 
     demo_parser = subparsers.add_parser(
         "demo",
@@ -515,6 +515,22 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional path to persistent JSON knowledge graph file.",
     )
     serve_parser.add_argument(
+        "--seed-demo",
+        action="store_true",
+        help="Pre-populate the server with the demo engineering memory graph.",
+    )
+
+    mcp_parser = subparsers.add_parser(
+        "mcp",
+        help="Start the standards-compliant JSON-RPC 2.0 MCP server over stdin/stdout (alias for serve-stdio).",
+    )
+    mcp_parser.add_argument(
+        "--storage",
+        type=str,
+        default=None,
+        help="Optional path to persistent JSON knowledge graph file.",
+    )
+    mcp_parser.add_argument(
         "--seed-demo",
         action="store_true",
         help="Pre-populate the server with the demo engineering memory graph.",
@@ -594,10 +610,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             httpd.server_close()
         return 0
 
-    if args.subcommand == "serve-stdio":
-        storage_path = Path(args.storage) if args.storage else None
+    if args.subcommand in ("serve-stdio", "mcp") or args.subcommand is None:
+        storage_arg = getattr(args, "storage", None)
+        storage_path = Path(storage_arg) if storage_arg else None
         graph = BiTemporalMemoryGraph(storage_path=storage_path)
-        if args.seed_demo and not graph.entities:
+        seed_arg = getattr(args, "seed_demo", False)
+        if seed_arg and not graph.entities:
             build_demo_scenario(graph)
         server = CortexMCPServer(graph=graph)
         server.serve_stdio()
