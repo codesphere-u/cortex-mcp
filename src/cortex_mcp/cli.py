@@ -481,6 +481,29 @@ def build_parser() -> argparse.ArgumentParser:
     bench_parser.add_argument("--episodes", type=int, default=100, help="Number of episodes to benchmark.")
     bench_parser.add_argument("--json", action="store_true", help="Emit JSON output.")
 
+    http_parser = subparsers.add_parser(
+        "serve-http",
+        help="Start the remote HTTP / SSE MCP server for cloud hosting (Glama.ai, Fly.io, Docker).",
+    )
+    http_parser.add_argument(
+        "--host",
+        type=str,
+        default="0.0.0.0",
+        help="Host interface to bind (default: 0.0.0.0)",
+    )
+    http_parser.add_argument(
+        "--port",
+        type=int,
+        default=8000,
+        help="Port to listen on (default: 8000)",
+    )
+    http_parser.add_argument(
+        "--storage",
+        type=str,
+        default=None,
+        help="Path to SQLite persistence file.",
+    )
+
     serve_parser = subparsers.add_parser(
         "serve-stdio",
         help="Start the standards-compliant JSON-RPC 2.0 MCP server over stdin/stdout.",
@@ -556,6 +579,19 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     if args.subcommand == "benchmark":
         run_benchmark(num_facts=args.facts, num_episodes=args.episodes, output_json=args.json)
+        return 0
+
+    if args.subcommand == "serve-http":
+        from cortex_mcp.http_server import run_http_server
+        storage_path = Path(args.storage) if args.storage else None
+        graph = BiTemporalMemoryGraph(storage_path=storage_path)
+        server = CortexMCPServer(graph=graph)
+        httpd = run_http_server(server, host=args.host, port=args.port)
+        print(f"Cortex-MCP HTTP/SSE server running on http://{args.host}:{args.port}")
+        try:
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            httpd.server_close()
         return 0
 
     if args.subcommand == "serve-stdio":

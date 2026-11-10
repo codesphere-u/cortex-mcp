@@ -8,6 +8,8 @@
   "type": "mcp_server",
   "status": "production",
   "transport": [
+    "http",
+    "sse",
     "stdio"
   ],
   "keywords": [
