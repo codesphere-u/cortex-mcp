@@ -143,17 +143,71 @@ Add `cortex-mcp` to your agent's `mcp_config.json` (or `.cursor/mcp.json` / `cla
 }
 ```
 
-### Exposed MCP Tools (`tools/list`)
+### Exposed MCP Tools (`tools/list`) & Detailed Usage Guide
 
-| Tool Name | Purpose |
-| :--- | :--- |
-| `memory_record_episode` | Record an immutable engineering episode (`adr`, `bug_root_cause`, `invariant`, `session_note`, `migration`, `incident`) with touched files and mentioned entities. |
-| `memory_upsert_fact` | Record a directed `(subject_id, predicate, object)` fact with automatic bi-temporal conflict detection and supersession when `singular=True`. |
-| `memory_compile_context` | Compile a provenance-cited, token-budgeted context bundle (`max_tokens`) using hybrid BM25 + 2-hop graph spreading activation. |
-| `memory_query_entity` | Inspect an entity's active facts, superseded historical facts, related episodes, and K-hop ego-graph neighborhood. |
-| `memory_time_travel` | Query the entire knowledge graph as of any historical ISO-8601 UTC timestamp (`as_of`). |
-| `memory_verify_integrity` | Verify canonical SHA-256 hashes across all facts and episodes and compute the graph Merkle root digest. |
-| `cortex_audit_contradictions` | Scan active facts for unresolved logical contradictions (negation polarity inversions, antonym objects, predicate alias collisions, or unsuperseded multi-value drift) with optional `auto_resolve=True`. |
+| Tool Name | What is its use? (Purpose) | Key Arguments | Typical Output |
+| :--- | :--- | :--- | :--- |
+| `memory_record_episode` | Record an immutable engineering episode (`adr`, `bug_root_cause`, `invariant`, `session_note`, `migration`, `incident`) with touched files and mentioned entities. | `title` (str), `category` (enum), `content` (str), `files_touched` (list), `entities_mentioned` (list) | `{"episode": {"id": "ep_...", "sha256": "..."}}` |
+| `memory_upsert_fact` | Record a directed `(subject_id, predicate, object)` fact with automatic bi-temporal conflict detection and supersession when `singular=True`. | `subject_id` (str), `predicate` (str), `object_value` (str), `singular` (bool, default `True`) | `{"fact": {"id": "fact_...", "superseded": [...]}}` |
+| `memory_compile_context` | Compile a provenance-cited, token-budgeted context bundle (`max_tokens`) using hybrid BM25 + 2-hop graph spreading activation. | `query` (str), `max_tokens` (int, default `1200`), `as_of` (iso8601), `include_superseded` (bool) | `{"markdown": "...", "token_count": 842, "citations": [...]}` |
+| `memory_query_entity` | Inspect an entity's active facts, superseded historical facts, related episodes, and K-hop ego-graph neighborhood. | `entity_id` (str), `max_hops` (int, default `2`), `include_superseded` (bool) | `{"entity": "...", "active_facts": [...], "history": [...]}` |
+| `memory_time_travel` | Query the entire knowledge graph as of any historical ISO-8601 UTC timestamp (`as_of`). | `as_of` (iso8601 UTC timestamp str) | `{"as_of": "...", "active_facts": [...], "snapshot_hash": "..."}` |
+| `memory_verify_integrity` | Verify canonical SHA-256 hashes across all facts and episodes and compute the graph Merkle root digest. | _None_ | `{"verified": true, "fact_count": 12, "merkle_root": "..."}` |
+| `cortex_audit_contradictions` | Scan active facts for unresolved logical contradictions (negation polarity inversions, antonym objects, predicate alias collisions, or unsuperseded multi-value drift) with optional `auto_resolve=True`. | `as_of` (optional str), `auto_resolve` (bool, default `False`) | `{"contradiction_count": 0, "findings": [], "auto_resolved": []}` |
+
+#### Tool Usage Examples
+
+##### 1. `memory_upsert_fact` — Recording Architectural Facts with Automatic Supersession
+When an AI agent modifies architecture (e.g. changing token signing algorithm from RS256 to Ed25519), calling `memory_upsert_fact` updates the active decision while preserving historical auditability:
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "memory_upsert_fact",
+    "arguments": {
+      "subject_id": "auth_service",
+      "predicate": "signing_algorithm",
+      "object_value": "Ed25519",
+      "singular": true
+    }
+  }
+}
+```
+
+##### 2. `memory_compile_context` — Compiling Token-Budgeted Context for Coding Prompts
+Before an agent begins a task, compile relevant historical decisions within a strict token budget:
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/call",
+  "params": {
+    "name": "memory_compile_context",
+    "arguments": {
+      "query": "authentication token signing and database transaction isolation",
+      "max_tokens": 800
+    }
+  }
+}
+```
+
+##### 3. `cortex_audit_contradictions` — Auditing Multi-Agent Fact Drift
+Detect if two autonomous agents made conflicting decisions in the same codebase:
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "tools/call",
+  "params": {
+    "name": "cortex_audit_contradictions",
+    "arguments": {
+      "auto_resolve": true
+    }
+  }
+}
+```
 
 ### `v1.1.0` Features: Contradiction Auditor & `TruthGate` Citation Exporter
 
@@ -231,7 +285,7 @@ python -m cortex_mcp.cli benchmark
 pytest -v
 ```
 
-All **84 tests** validate bi-temporal supersession chains, semantic & polarity contradiction auditing, `TruthGate` `SourceDocument` citation bundle export, point-in-time queries, K-hop graph traversal, token-budget compliance, cryptographic tamper detection, JSON-RPC 2.0 MCP protocol compliance, and CLI subcommands.
+All **100 tests** validate bi-temporal supersession chains, semantic & polarity contradiction auditing, `TruthGate` `SourceDocument` citation bundle export, point-in-time queries, K-hop graph traversal, token-budget compliance, cryptographic tamper detection, JSON-RPC 2.0 MCP protocol compliance, and CLI subcommands.
 
 ---
 
@@ -249,10 +303,28 @@ curl -s -X POST https://cortex-mcp-steel.vercel.app/mcp -H 'Content-Type: applic
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```
 
-Client config (any Streamable-HTTP-capable MCP client):
+### Client Configuration
 
+#### 1. Claude Code CLI
+Add instantly to your Claude Code workspace or global user profile:
+```bash
+# Add to current project:
+claude mcp add --transport http cortex-mcp https://cortex-mcp-steel.vercel.app/mcp
+
+# Or add globally across all projects:
+claude mcp add --scope user --transport http cortex-mcp https://cortex-mcp-steel.vercel.app/mcp
+```
+
+#### 2. Claude Desktop / Cursor / Windsurf (`mcp.json`)
 ```json
-{ "mcpServers": { "cortex-mcp": { "url": "https://cortex-mcp-steel.vercel.app/mcp" } } }
+{
+  "mcpServers": {
+    "cortex-mcp": {
+      "type": "http",
+      "url": "https://cortex-mcp-steel.vercel.app/mcp"
+    }
+  }
+}
 ```
 
 **Hosted limitations:** All 7 tools are available. State is **in-memory and ephemeral** (per serverless instance, shared by callers) — use the local stdio install for persistent, private memory.
