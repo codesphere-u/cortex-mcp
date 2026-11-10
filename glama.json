@@ -23,5 +23,10 @@
     "knowledge-graph",
     "context-engineering",
     "model-context-protocol"
+  ],
+  "capabilities": [
+    "tools",
+    "resources",
+    "prompts"
   ]
 }
