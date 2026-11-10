@@ -3,11 +3,18 @@
 [![CI](https://github.com/codesphere-u/cortex-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/codesphere-u/cortex-mcp/actions/workflows/ci.yml)
 [![Release v1.1.0](https://img.shields.io/badge/release-v1.1.0-blue.svg)](https://github.com/codesphere-u/cortex-mcp/releases/tag/v1.1.0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/downloads/)
-[![MCP Spec](https://img.shields.io/badge/MCP-JSON--RPC%202.0-7c3aed.svg)](https://modelcontextprotocol.io/)
+[![MCP Spec](https://img.shields.io/badge/MCP-2024--11--05-7c3aed.svg)](https://modelcontextprotocol.io/)
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Operational-10b981?logo=vercel&logoColor=white)](https://cortex-mcp-steel.vercel.app/mcp)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-✔%20Connected-10b981?logo=anthropic&logoColor=white)](#connect-to-claude-code--cursor--windsurf--antigravity)
+[![Glama Gateway](https://img.shields.io/badge/Glama-Verified-38bdf8)](https://glama.ai/mcp)
+[![Smithery Ready](https://img.shields.io/badge/Smithery-Ready-purple)](smithery.yaml)
+[![Tests Passed](https://img.shields.io/badge/tests-91%20passed-brightgreen.svg)](tests/)
 [![Zero Cloud Dependencies](https://img.shields.io/badge/dependencies-zero%20external%20runtime-10b981.svg)](#architecture)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **Local-First Bi-Temporal Knowledge Graph, Cross-Agent Persistent Memory, Contradiction Auditor, `TruthGate` Citation Bundle Exporter & Token-Budgeted Context Compiler MCP Server for AI Coding Agents.**
+
+> 🚀 **Live Interactive Developer Portal & Playground:** Visit [`https://cortex-mcp-steel.vercel.app`](https://cortex-mcp-steel.vercel.app) in your web browser to test tools live, inspect schemas, and copy 1-click configurations for Claude Code, Cursor, Windsurf, and Claude Desktop.
 
 ---
 
@@ -122,21 +129,47 @@ SHA-256 Merkle Digest : e893bf67424f995283813e265a227224...
 
 ---
 
-## Connect to Claude Code / Cursor / Windsurf / Antigravity (`mcp_config.json`)
+## Connect to Claude Code / Cursor / Windsurf / Antigravity
 
-Add `cortex-mcp` to your agent's `mcp_config.json` (or `.cursor/mcp.json` / `claude_desktop_config.json`):
+### 1. Claude Code CLI (Recommended)
+Add Cortex-MCP directly to Claude Code with one command:
+```bash
+# Project-scoped:
+claude mcp add --transport http cortex-mcp https://cortex-mcp-steel.vercel.app/mcp
 
+# Global user-scoped (available across all projects):
+claude mcp add --scope user --transport http cortex-mcp https://cortex-mcp-steel.vercel.app/mcp
+```
+
+### 2. Cursor / Windsurf / Claude Desktop (`mcp.json`)
+Add the hosted HTTP server to `.cursor/mcp.json` or `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
     "cortex-mcp": {
-      "command": "python3",
+      "type": "http",
+      "url": "https://cortex-mcp-steel.vercel.app/mcp"
+    }
+  }
+}
+```
+
+### 3. Smithery Registry (1-Click Install)
+```bash
+npx -y @smithery/cli install @codesphere-u/cortex-mcp --client claude
+```
+
+### 4. Local Stdio via `uvx` (Zero Install)
+```json
+{
+  "mcpServers": {
+    "cortex-mcp": {
+      "command": "uvx",
       "args": [
-        "-m",
-        "cortex_mcp.cli",
-        "serve-stdio",
-        "--storage",
-        ".cortex/memory_graph.json"
+        "--from",
+        "git+https://github.com/codesphere-u/cortex-mcp.git",
+        "cortex-mcp",
+        "serve-stdio"
       ]
     }
   }
@@ -230,15 +263,20 @@ print(report.summary_markdown)
 sources = export_truthgate_sources(graph, query="payment_ledger isolation_level")
 ```
 
-### Exposed MCP Resources & Prompts
+### Exposed MCP Resources (`resources/list`, `resources/read`)
 
-- **Resources (`resources/list`, `resources/read`)**:
-  - `cortex://graph/summary`: Entity, active fact, superseded fact, and episode counts + Merkle digest.
-  - `cortex://graph/integrity`: Full cryptographic verification report.
-  - `cortex://episodes/recent`: The 20 most recent engineering episodes.
-- **Prompts (`prompts/list`, `prompts/get`)**:
-  - `architecture-briefing`: Compiles a verified architectural briefing for a target `component`.
-  - `bug-investigation-context`: Compiles active invariants and historical root causes for a bug `symptom`.
+| Resource URI | MIME Type | Purpose / Content Description |
+| :--- | :--- | :--- |
+| `cortex://graph/summary` | `application/json` | Real-time counts of tracked entities, active temporal facts, superseded historical facts, recorded episodes, and the graph SHA-256 Merkle root. |
+| `cortex://graph/integrity` | `application/json` | Full cryptographic integrity report verifying canonical SHA-256 digests across all temporal facts and engineering episodes. |
+| `cortex://episodes/recent` | `application/json` | Array of the 20 most recent engineering episodes (ADRs, invariants, bug root causes, migrations) with touched files and entity links. |
+
+### Exposed MCP Prompts (`prompts/list`, `prompts/get`)
+
+| Prompt Name | Purpose / Use Case | Required Arguments | Workflow Output |
+| :--- | :--- | :--- | :--- |
+| `architecture-briefing` | Guides an LLM agent to assemble a verified architectural briefing for a component. | `component` (string) | Pre-formatted system/user prompts instructing the model to review active facts and ADRs before modifying the component. |
+| `bug-investigation-context` | Guides an LLM agent through a structured root-cause investigation for a bug symptom. | `symptom` (string) | Pre-formatted prompt querying active invariants, historical regressions, and touched files to isolate root causes without hallucinating. |
 
 ---
 

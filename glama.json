@@ -10,10 +10,12 @@
   "url": "https://cortex-mcp-steel.vercel.app/mcp",
   "endpoints": {
     "streamable_http": "https://cortex-mcp-steel.vercel.app/mcp",
+    "sse": "https://cortex-mcp-steel.vercel.app/sse",
     "health": "https://cortex-mcp-steel.vercel.app/health"
   },
   "transport": [
     "streamable-http",
+    "sse",
     "stdio"
   ],
   "keywords": [

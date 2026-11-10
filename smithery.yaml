@@ -1,0 +1,10 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties: {}
+  commandFunction: |-
+    (config) => ({
+      command: 'uvx',
+      args: ['--from', 'git+https://github.com/codesphere-u/cortex-mcp.git', 'cortex-mcp', 'serve-stdio']
+    })
