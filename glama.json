@@ -1,0 +1,21 @@
+{
+  "$schema": "https://glama.ai/mcp/schemas/server.json",
+  "maintainers": [
+    "codesphere-u"
+  ],
+  "name": "cortex-mcp",
+  "description": "Bi-temporal working memory and knowledge graph MCP server with fact superseding, contradiction auditing, and session continuity.",
+  "type": "mcp_server",
+  "status": "production",
+  "transport": [
+    "stdio"
+  ],
+  "keywords": [
+    "mcp",
+    "agent-memory",
+    "bitemporal",
+    "knowledge-graph",
+    "context-engineering",
+    "model-context-protocol"
+  ]
+}
