@@ -235,6 +235,30 @@ All **84 tests** validate bi-temporal supersession chains, semantic & polarity c
 
 ---
 
+## Hosted endpoint (Vercel)
+
+A free, public, stateless deployment of Cortex MCP runs over **MCP Streamable HTTP**:
+
+| | |
+|---|---|
+| MCP endpoint | `https://cortex-mcp-steel.vercel.app/mcp` (JSON-RPC 2.0 over `POST`) |
+| Health probe | `https://cortex-mcp-steel.vercel.app/health` |
+
+```bash
+curl -s -X POST https://cortex-mcp-steel.vercel.app/mcp -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+```
+
+Client config (any Streamable-HTTP-capable MCP client):
+
+```json
+{ "mcpServers": { "cortex-mcp": { "url": "https://cortex-mcp-steel.vercel.app/mcp" } } }
+```
+
+**Hosted limitations:** All 7 tools are available. State is **in-memory and ephemeral** (per serverless instance, shared by callers) — use the local stdio install for persistent, private memory.
+
+The hosted gateway is [`api/index.py`](api/index.py); it enforces a 1 MB body limit, strict JSON-RPC envelopes and the tool restrictions above. Deploy your own copy with `npx vercel deploy --prod` (entrypoint is configured in `pyproject.toml` under `[tool.vercel]`).
+
 ## License
 
 MIT License — Copyright (c) 2026 [Akandwanaho Ivan Alvin](https://github.com/codesphere-u).
