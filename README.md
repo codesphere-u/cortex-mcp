@@ -6,7 +6,7 @@
 [![MCP Spec](https://img.shields.io/badge/MCP-2024--11--05-7c3aed.svg)](https://modelcontextprotocol.io/)
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Operational-10b981?logo=vercel&logoColor=white)](https://cortex-mcp-steel.vercel.app/mcp)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-✔%20Connected-10b981?logo=anthropic&logoColor=white)](#connect-to-claude-code--cursor--windsurf--antigravity)
-[![Glama Gateway](https://img.shields.io/badge/Glama-Verified-38bdf8)](https://glama.ai/mcp)
+[![Glama Score](https://glama.ai/mcp/servers/codesphere-u/cortex-mcp/badges/score.svg)](https://glama.ai/mcp/servers/codesphere-u/cortex-mcp)
 [![Smithery Ready](https://img.shields.io/badge/Smithery-Ready-purple)](smithery.yaml)
 [![Tests Passed](https://img.shields.io/badge/tests-91%20passed-brightgreen.svg)](tests/)
 [![Zero Cloud Dependencies](https://img.shields.io/badge/dependencies-zero%20external%20runtime-10b981.svg)](#architecture)
@@ -15,6 +15,12 @@
 **Local-First Bi-Temporal Knowledge Graph, Cross-Agent Persistent Memory, Contradiction Auditor, `TruthGate` Citation Bundle Exporter & Token-Budgeted Context Compiler MCP Server for AI Coding Agents.**
 
 > 🚀 **Live Interactive Developer Portal & Playground:** Visit [`https://cortex-mcp-steel.vercel.app`](https://cortex-mcp-steel.vercel.app) in your web browser to test tools live, inspect schemas, and copy 1-click configurations for Claude Code, Cursor, Windsurf, and Claude Desktop.
+
+<p align="center">
+  <a href="https://glama.ai/mcp/servers/codesphere-u/cortex-mcp">
+    <img src="https://glama.ai/mcp/servers/codesphere-u/cortex-mcp/badges/card.svg" alt="cortex-mcp MCP server – quality and maintenance score on Glama" width="500" />
+  </a>
+</p>
 
 ---
 
