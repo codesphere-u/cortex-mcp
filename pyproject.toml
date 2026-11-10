@@ -59,3 +59,7 @@ Changelog = "https://github.com/codesphere-u/cortex-mcp/blob/main/CHANGELOG.md"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+
+[tool.vercel]
+entrypoint = "api.index:app"
+
