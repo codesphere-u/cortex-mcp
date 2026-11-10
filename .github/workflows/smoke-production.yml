@@ -11,4 +11,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: python scripts/smoke_test.py "https://cortex-mcp-steel.vercel.app" 7
+      - run: python scripts/smoke_test.py "https://cortex-mcp-steel.vercel.app" 7 3 2
