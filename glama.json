@@ -7,6 +7,12 @@
   "description": "Bi-temporal working memory and knowledge graph MCP server with fact superseding, contradiction auditing, and session continuity.",
   "type": "mcp_server",
   "status": "production",
+  "url": "https://cortex-mcp-steel.vercel.app/sse",
+  "endpoints": {
+    "sse": "https://cortex-mcp-steel.vercel.app/sse",
+    "http": "https://cortex-mcp-steel.vercel.app/messages",
+    "health": "https://cortex-mcp-steel.vercel.app/health"
+  },
   "transport": [
     "http",
     "sse",
