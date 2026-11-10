@@ -77,10 +77,23 @@ INTERNAL_ERROR = -32603
 mcp_engine = CortexMCPServer()
 
 app = FastAPI(
-    title="Cortex MCP (hosted MCP)",
+    title=f"Cortex MCP Server ({SERVER_VERSION})",
+    description="High-performance Bi-temporal Working Memory and Knowledge Graph Model Context Protocol (MCP) server running on Vercel Serverless. "
+                "Supports tripartite protocol capabilities (Tools, Resources, Prompts) over Streamable HTTP and SSE. "
+                "Built by CodeSphere Innovations.",
     version=SERVER_VERSION,
     docs_url="/docs",
+    redoc_url="/redoc",
     openapi_url="/openapi.json",
+    contact={
+        "name": "Codesphere Innovations",
+        "url": "https://github.com/codesphere-u/cortex-mcp",
+        "email": "codesphereinnovationz@gmail.com",
+    },
+    license_info={
+        "name": "MIT License",
+        "url": "https://opensource.org/licenses/MIT",
+    },
 )
 app.add_middleware(
     CORSMiddleware,
