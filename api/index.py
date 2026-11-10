@@ -95,3 +95,5 @@ async def handle_jsonrpc(request: Request):
         return Response(status_code=204)
 
     return JSONResponse(content=res)
+
+
