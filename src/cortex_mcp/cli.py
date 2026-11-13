@@ -11,10 +11,11 @@ from __future__ import annotations
 import argparse
 import json
 import math
-from pathlib import Path
 import sys
 import time
-from typing import Any, Dict, List, Optional, Sequence
+from collections.abc import Sequence
+from pathlib import Path
+from typing import Any
 
 from cortex_mcp.compiler import ContextCompiler
 from cortex_mcp.contradictions import audit_contradictions
@@ -29,15 +30,15 @@ def percentile(values: Sequence[float], pct: float) -> float:
         return 0.0
     ordered = sorted(values)
     idx = (pct / 100.0) * (len(ordered) - 1)
-    lower = int(math.floor(idx))
-    upper = int(math.ceil(idx))
+    lower = math.floor(idx)
+    upper = math.ceil(idx)
     if lower == upper:
         return ordered[lower]
     weight = idx - lower
     return ordered[lower] * (1.0 - weight) + ordered[upper] * weight
 
 
-def build_demo_scenario(graph: Optional[BiTemporalMemoryGraph] = None) -> BiTemporalMemoryGraph:
+def build_demo_scenario(graph: BiTemporalMemoryGraph | None = None) -> BiTemporalMemoryGraph:
     """Populate a realistic multi-session engineering memory graph."""
     g = graph or BiTemporalMemoryGraph()
 
@@ -195,7 +196,7 @@ def build_demo_scenario(graph: Optional[BiTemporalMemoryGraph] = None) -> BiTemp
     return g
 
 
-def run_demo(output_json: bool = False) -> Dict[str, Any]:
+def run_demo(output_json: bool = False) -> dict[str, Any]:
     """Run the multi-session demo and print or return structured results."""
     graph = build_demo_scenario()
     compiler = ContextCompiler(graph)
@@ -211,7 +212,7 @@ def run_demo(output_json: bool = False) -> Dict[str, Any]:
     historical_snapshot = graph.snapshot_as_of("2026-02-01T00:00:00+00:00")
     integrity = graph.verify_integrity()
 
-    summary = {
+    summary: dict[str, Any] = {
         "scenario": "Multi-Session Engineering Memory (JWT -> PASETO Migration + Ledger Invariant)",
         "integrity": integrity,
         "historical_as_of_2026_02_01": {
@@ -249,7 +250,7 @@ def run_demo(output_json: bool = False) -> Dict[str, Any]:
     return summary
 
 
-def run_benchmark(num_facts: int = 500, num_episodes: int = 100, output_json: bool = False) -> Dict[str, Any]:
+def run_benchmark(num_facts: int = 500, num_episodes: int = 100, output_json: bool = False) -> dict[str, Any]:
     """Run reproducible performance & accuracy benchmarks across 500 facts & 100 episodes."""
     graph = BiTemporalMemoryGraph()
 
@@ -266,7 +267,7 @@ def run_benchmark(num_facts: int = 500, num_episodes: int = 100, output_json: bo
 
     # 1. Benchmark Episode Recording (100 episodes)
     categories = ["adr", "bug_root_cause", "invariant", "session_note", "migration"]
-    episode_latencies_ms: List[float] = []
+    episode_latencies_ms: list[float] = []
     for i in range(num_episodes):
         cat = categories[i % len(categories)]
         e1 = f"service_{i % num_entities:03d}"
@@ -288,7 +289,7 @@ def run_benchmark(num_facts: int = 500, num_episodes: int = 100, output_json: bo
 
     # 2. Benchmark Fact Ingestion + Bi-Temporal Supersession (500 facts total)
     # First 350 facts establish relationships and attributes; final 150 facts supersede 150 singular attributes
-    fact_latencies_ms: List[float] = []
+    fact_latencies_ms: list[float] = []
     for i in range(num_facts):
         subj = f"service_{i % num_entities:03d}"
         if i < 200:
@@ -340,7 +341,7 @@ def run_benchmark(num_facts: int = 500, num_episodes: int = 100, output_json: bo
             fact_latencies_ms.append((time.perf_counter() - t0) * 1000.0)
 
     # 3. Benchmark 2-Hop Ego-Graph Subgraph Traversal (60 runs)
-    traversal_latencies_ms: List[float] = []
+    traversal_latencies_ms: list[float] = []
     for i in range(num_entities):
         seed = f"service_{i:03d}"
         t0 = time.perf_counter()
@@ -349,7 +350,7 @@ def run_benchmark(num_facts: int = 500, num_episodes: int = 100, output_json: bo
 
     # 4. Benchmark Token-Budgeted Context Compilation & Stale-Fact Suppression (50 queries)
     compiler = ContextCompiler(graph)
-    compile_latencies_ms: List[float] = []
+    compile_latencies_ms: list[float] = []
     stale_leaked = 0
     total_stale_excluded = 0
     budget_violations = 0
@@ -585,7 +586,7 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main(argv: Optional[Sequence[str]] = None) -> int:
+def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
 

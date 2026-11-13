@@ -14,12 +14,12 @@ from __future__ import annotations
 import copy
 import json
 import os
+import sys
 import time
+import uuid
 from collections import defaultdict, deque
 from pathlib import Path
-import sys
-from typing import Any, Dict, List, Optional
-import uuid
+from typing import Any, cast
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 SRC_DIR = ROOT_DIR / "src"
@@ -32,6 +32,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 
 from cortex_mcp.server import CortexMCPServer
+
 try:
     from portal import render_developer_portal
 except ImportError:
@@ -44,10 +45,10 @@ MAX_BODY_BYTES = 1_000_000
 # Best-effort per-IP sliding-window rate limit. State is per serverless instance, so it
 # bounds abuse of a warm instance but is not a global quota (use Vercel Firewall for that).
 RATE_LIMIT_PER_MIN = int(os.environ.get("MCP_RATE_LIMIT_PER_MIN", "60"))
-_hits: Dict[str, deque] = defaultdict(deque)
+_hits: dict[str, deque] = defaultdict(deque)
 
 
-def _rate_limited(request: Request) -> Optional[int]:
+def _rate_limited(request: Request) -> int | None:
     """Return Retry-After seconds when the caller exceeded the limit, else None."""
     if RATE_LIMIT_PER_MIN <= 0:
         return None
@@ -66,9 +67,9 @@ def _rate_limited(request: Request) -> Optional[int]:
     return None
 
 # Tools hidden and refused on the public hosted deployment (filesystem / process access).
-HOSTED_BLOCKED_TOOLS = frozenset([])
+HOSTED_BLOCKED_TOOLS: frozenset[str] = frozenset()
 # Per-tool arguments that are refused (and stripped from the advertised schema) when hosted.
-HOSTED_FORBIDDEN_ARGS: Dict[str, List[str]] = {}
+HOSTED_FORBIDDEN_ARGS: dict[str, list[str]] = {}
 
 PARSE_ERROR = -32700
 INVALID_REQUEST = -32600
@@ -105,7 +106,7 @@ app.add_middleware(
 )
 
 
-def _resolve_request_id(header_value: Optional[str]) -> str:
+def _resolve_request_id(header_value: str | None) -> str:
     """Validate incoming X-Request-ID or mint a fresh hex trace token."""
     candidate = (header_value or "").strip()
     if (
@@ -136,7 +137,7 @@ def _error(code: int, message: str, req_id: Any = None, status: int = 200) -> JS
     )
 
 
-def _sanitize_tools(tools: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def _sanitize_tools(tools: list[dict[str, Any]]) -> list[dict[str, Any]]:
     visible = []
     for tool in tools:
         name = tool.get("name")
@@ -144,15 +145,16 @@ def _sanitize_tools(tools: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
             continue
         tool = copy.deepcopy(tool)
         schema = tool.get("inputSchema") or {}
-        for arg in HOSTED_FORBIDDEN_ARGS.get(name, []):
-            schema.get("properties", {}).pop(arg, None)
-            if arg in schema.get("required", []):
-                schema["required"].remove(arg)
+        if isinstance(name, str):
+            for arg in HOSTED_FORBIDDEN_ARGS.get(name, []):
+                schema.get("properties", {}).pop(arg, None)
+                if arg in schema.get("required", []):
+                    schema["required"].remove(arg)
         visible.append(tool)
     return visible
 
 
-def _dispatch(message: Any) -> Optional[Dict[str, Any]]:
+def _dispatch(message: Any) -> dict[str, Any] | None:
     """Process one JSON-RPC message. Returns None for notifications."""
     if not isinstance(message, dict) or message.get("jsonrpc") != "2.0" or "method" not in message:
         return {
@@ -175,7 +177,7 @@ def _dispatch(message: Any) -> Optional[Dict[str, Any]]:
         refused = None
         if name in HOSTED_BLOCKED_TOOLS:
             refused = f"Tool '{name}' is disabled on the hosted deployment (filesystem/process access). Install locally via stdio to use it."
-        else:
+        elif isinstance(name, str):
             for arg in HOSTED_FORBIDDEN_ARGS.get(name, []):
                 if isinstance(args, dict) and arg in args:
                     refused = f"Argument '{arg}' is disabled on the hosted deployment. Pass the content inline instead."
@@ -201,7 +203,7 @@ def _dispatch(message: Any) -> Optional[Dict[str, Any]]:
 
     if method == "tools/list" and isinstance(response.get("result"), dict):
         response["result"]["tools"] = _sanitize_tools(response["result"].get("tools", []))
-    return response
+    return cast(dict[str, Any] | None, response)
 
 
 @app.get("/")
@@ -211,9 +213,12 @@ def _dispatch(message: Any) -> Optional[Dict[str, Any]]:
 async def health_check(request: Request):
     accept = request.headers.get("accept", "")
     if "text/html" in accept:
-        tools = _sanitize_tools(mcp_engine.handle_request({"jsonrpc": "2.0", "id": 1, "method": "tools/list"}).get("result", {}).get("tools", []))
-        resources = mcp_engine.handle_request({"jsonrpc": "2.0", "id": 2, "method": "resources/list"}).get("result", {}).get("resources", [])
-        prompts = mcp_engine.handle_request({"jsonrpc": "2.0", "id": 3, "method": "prompts/list"}).get("result", {}).get("prompts", [])
+        tools_resp = mcp_engine.handle_request({"jsonrpc": "2.0", "id": 1, "method": "tools/list"}) or {}
+        resources_resp = mcp_engine.handle_request({"jsonrpc": "2.0", "id": 2, "method": "resources/list"}) or {}
+        prompts_resp = mcp_engine.handle_request({"jsonrpc": "2.0", "id": 3, "method": "prompts/list"}) or {}
+        tools = _sanitize_tools(tools_resp.get("result", {}).get("tools", []))
+        resources = resources_resp.get("result", {}).get("resources", [])
+        prompts = prompts_resp.get("result", {}).get("prompts", [])
         html_content = render_developer_portal(
             server_name=SERVER_NAME,
             server_version=SERVER_VERSION,

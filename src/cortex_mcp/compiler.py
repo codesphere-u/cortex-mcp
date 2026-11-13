@@ -7,24 +7,24 @@ then deterministically packs the highest-utility context within a strict token b
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 import dataclasses
 import math
 import re
-from typing import Any, Dict, List, Optional, Set, Tuple
+from dataclasses import dataclass, field
+from typing import Any
 
-from cortex_mcp.graph import BiTemporalMemoryGraph, Episode, Entity, TemporalFact
+from cortex_mcp.graph import BiTemporalMemoryGraph, Entity, Episode, TemporalFact
 
 _TOKEN_PATTERN = re.compile(r"[A-Za-z0-9_./:-]+")
 _CAMEL_BOUNDARY = re.compile(r"(?<=[a-z0-9])(?=[A-Z])")
 
 
-def tokenize(text: str) -> List[str]:
+def tokenize(text: str) -> list[str]:
     """Tokenize code/engineering text while preserving compound identifiers and sub-tokens."""
     if not text:
         return []
     raw_tokens = _TOKEN_PATTERN.findall(text)
-    expanded: List[str] = []
+    expanded: list[str] = []
     for tok in raw_tokens:
         lower = tok.lower()
         expanded.append(lower)
@@ -65,10 +65,10 @@ class CompiledContextItem:
     token_count: int
     formatted_text: str
     citation: str
-    entities_involved: List[str] = field(default_factory=list)
+    entities_involved: list[str] = field(default_factory=list)
     is_superseded: bool = False
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return dataclasses.asdict(self)
 
 
@@ -80,14 +80,14 @@ class CompiledContextBundle:
     max_tokens: int
     used_tokens: int
     utilization_ratio: float
-    items: List[CompiledContextItem]
+    items: list[CompiledContextItem]
     excluded_stale_fact_count: int
     excluded_budget_item_count: int
-    provenance_citations: List[str]
-    activated_entities: List[str]
+    provenance_citations: list[str]
+    activated_entities: list[str]
     rendered_markdown: str
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "query": self.query,
             "max_tokens": self.max_tokens,
@@ -103,7 +103,7 @@ class CompiledContextBundle:
         }
 
 
-CATEGORY_PRIORITY_WEIGHTS: Dict[str, float] = {
+CATEGORY_PRIORITY_WEIGHTS: dict[str, float] = {
     "invariant": 1.35,
     "adr": 1.25,
     "bug_root_cause": 1.20,
@@ -132,9 +132,9 @@ class ContextCompiler:
 
     def _compute_bm25_scores(
         self,
-        query_tokens: List[str],
-        docs: Dict[str, List[str]],
-    ) -> Dict[str, float]:
+        query_tokens: list[str],
+        docs: dict[str, list[str]],
+    ) -> dict[str, float]:
         """Compute Okapi BM25 scores for a collection of tokenized documents."""
         if not query_tokens or not docs:
             return {doc_id: 0.0 for doc_id in docs}
@@ -143,17 +143,17 @@ class ContextCompiler:
         avgdl = sum(len(tokens) for tokens in docs.values()) / max(1, num_docs)
 
         # Document frequencies
-        df: Dict[str, int] = {}
-        doc_term_counts: Dict[str, Dict[str, int]] = {}
+        df: dict[str, int] = {}
+        doc_term_counts: dict[str, dict[str, int]] = {}
         for doc_id, tokens in docs.items():
-            counts: Dict[str, int] = {}
+            counts: dict[str, int] = {}
             for t in tokens:
                 counts[t] = counts.get(t, 0) + 1
             doc_term_counts[doc_id] = counts
             for t in counts:
                 df[t] = df.get(t, 0) + 1
 
-        scores: Dict[str, float] = {}
+        scores: dict[str, float] = {}
         unique_query_terms = list(dict.fromkeys(query_tokens))
 
         for doc_id, tokens in docs.items():
@@ -202,7 +202,7 @@ class ContextCompiler:
         query: str,
         max_tokens: int = 1200,
         include_superseded: bool = False,
-        as_of: Optional[str] = None,
+        as_of: str | None = None,
     ) -> CompiledContextBundle:
         """Compile a token-budgeted, provenance-cited context bundle for `query`."""
         if max_tokens <= 0:
@@ -213,66 +213,66 @@ class ContextCompiler:
 
         # 1. Separate active vs stale facts
         all_facts = list(self.graph.facts.values())
-        candidate_facts: List[TemporalFact] = []
+        candidate_facts: list[TemporalFact] = []
         excluded_stale_count = 0
 
-        for fact in all_facts:
-            is_active = fact.is_active_at(as_of)
+        for raw_fact in all_facts:
+            is_active = raw_fact.is_active_at(as_of)
             if is_active:
-                candidate_facts.append(fact)
+                candidate_facts.append(raw_fact)
             else:
                 if include_superseded and as_of is None:
-                    candidate_facts.append(fact)
+                    candidate_facts.append(raw_fact)
                 else:
                     # Check if this stale fact shares subject/predicate/object tokens with query
-                    fact_text = f"{fact.subject_id} {fact.predicate} {fact.target_display}".lower()
+                    fact_text = f"{raw_fact.subject_id} {raw_fact.predicate} {raw_fact.target_display}".lower()
                     if any(qt in fact_text for qt in query_tokens) or not query_tokens:
                         excluded_stale_count += 1
 
         # 2. Filter episodes up to `as_of` if time-traveling
-        candidate_episodes: List[Episode] = []
-        for ep in self.graph.episodes.values():
+        candidate_episodes: list[Episode] = []
+        for raw_ep in self.graph.episodes.values():
             if as_of is not None:
                 from cortex_mcp.graph import parse_iso_timestamp
 
-                if parse_iso_timestamp(ep.timestamp) > parse_iso_timestamp(as_of):
+                if parse_iso_timestamp(raw_ep.timestamp) > parse_iso_timestamp(as_of):
                     continue
-            candidate_episodes.append(ep)
+            candidate_episodes.append(raw_ep)
 
         # 3. Build document corpus for BM25
-        docs: Dict[str, List[str]] = {}
-        item_lookup: Dict[str, Tuple[str, Any]] = {}
+        docs: dict[str, list[str]] = {}
+        item_lookup: dict[str, tuple[str, Any]] = {}
 
-        for fact in candidate_facts:
-            key = f"fact:{fact.id}"
-            text = f"{fact.subject_id} {fact.predicate} {fact.target_display}"
+        for cand_fact in candidate_facts:
+            key = f"fact:{cand_fact.id}"
+            text = f"{cand_fact.subject_id} {cand_fact.predicate} {cand_fact.target_display}"
             docs[key] = tokenize(text)
-            item_lookup[key] = ("fact", fact)
+            item_lookup[key] = ("fact", cand_fact)
 
-        for ep in candidate_episodes:
-            key = f"episode:{ep.id}"
-            text = f"{ep.title} {ep.category} {ep.content} {' '.join(ep.files_touched)} {' '.join(ep.entities_mentioned)}"
+        for cand_ep in candidate_episodes:
+            key = f"episode:{cand_ep.id}"
+            text = f"{cand_ep.title} {cand_ep.category} {cand_ep.content} {' '.join(cand_ep.files_touched)} {' '.join(cand_ep.entities_mentioned)}"
             docs[key] = tokenize(text)
-            item_lookup[key] = ("episode", ep)
+            item_lookup[key] = ("episode", cand_ep)
 
-        for ent in self.graph.entities.values():
+        for raw_ent in self.graph.entities.values():
             if as_of is not None:
                 from cortex_mcp.graph import parse_iso_timestamp
 
-                if parse_iso_timestamp(ent.created_at) > parse_iso_timestamp(as_of):
+                if parse_iso_timestamp(raw_ent.created_at) > parse_iso_timestamp(as_of):
                     continue
-            key = f"entity:{ent.id}"
-            text = f"{ent.id} {ent.name} {ent.entity_type} {ent.summary}"
+            key = f"entity:{raw_ent.id}"
+            text = f"{raw_ent.id} {raw_ent.name} {raw_ent.entity_type} {raw_ent.summary}"
             docs[key] = tokenize(text)
-            item_lookup[key] = ("entity", ent)
+            item_lookup[key] = ("entity", raw_ent)
 
         bm25_scores = self._compute_bm25_scores(query_tokens, docs)
 
         # 4. Compute exact identifier boosts and initial entity activations
-        entity_activation: Dict[str, float] = {}
-        for ent_id, ent in self.graph.entities.items():
+        entity_activation: dict[str, float] = {}
+        for ent_id, ent_obj in self.graph.entities.items():
             act = bm25_scores.get(f"entity:{ent_id}", 0.0)
-            if ent_id.lower() in query_lower or ent.name.lower() in query_lower:
+            if ent_id.lower() in query_lower or ent_obj.name.lower() in query_lower:
                 act += 4.0
             if act > 0:
                 entity_activation[ent_id] = act
@@ -297,24 +297,24 @@ class ContextCompiler:
         # 5. 2-Hop Graph Spreading Activation over active edges
         for _hop in range(2):
             next_activation = dict(entity_activation)
-            for fact in candidate_facts:
-                if not fact.is_active_at(as_of):
+            for active_fact in candidate_facts:
+                if not active_fact.is_active_at(as_of):
                     continue
-                s_act = entity_activation.get(fact.subject_id, 0.0)
-                if fact.object_id:
-                    o_act = entity_activation.get(fact.object_id, 0.0)
+                s_act = entity_activation.get(active_fact.subject_id, 0.0)
+                if active_fact.object_id:
+                    o_act = entity_activation.get(active_fact.object_id, 0.0)
                     if s_act > 0:
-                        propagated = s_act * self.spreading_decay * fact.confidence
-                        if propagated > next_activation.get(fact.object_id, 0.0):
-                            next_activation[fact.object_id] = propagated
+                        propagated = s_act * self.spreading_decay * active_fact.confidence
+                        if propagated > next_activation.get(active_fact.object_id, 0.0):
+                            next_activation[active_fact.object_id] = propagated
                     if o_act > 0:
-                        propagated = o_act * self.spreading_decay * fact.confidence
-                        if propagated > next_activation.get(fact.subject_id, 0.0):
-                            next_activation[fact.subject_id] = propagated
+                        propagated = o_act * self.spreading_decay * active_fact.confidence
+                        if propagated > next_activation.get(active_fact.subject_id, 0.0):
+                            next_activation[active_fact.subject_id] = propagated
             entity_activation = next_activation
 
         # 6. Score and build candidate CompiledContextItems
-        scored_candidates: List[CompiledContextItem] = []
+        scored_candidates: list[CompiledContextItem] = []
 
         for key, (kind, obj) in item_lookup.items():
             base_bm25 = bm25_scores.get(key, 0.0)
@@ -429,10 +429,10 @@ class ContextCompiler:
         header_tokens = estimate_tokens("\n".join(header_lines))
         used_tokens = min(header_tokens, max_tokens)
 
-        packed_items: List[CompiledContextItem] = []
+        packed_items: list[CompiledContextItem] = []
         excluded_budget_count = 0
-        citations: List[str] = []
-        activated_entities_set: Set[str] = set()
+        citations: list[str] = []
+        activated_entities_set: set[str] = set()
 
         for candidate in scored_candidates:
             if used_tokens + candidate.token_count <= max_tokens:

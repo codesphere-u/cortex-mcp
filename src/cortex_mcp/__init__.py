@@ -15,37 +15,42 @@ from cortex_mcp.contradictions import (
     normalize_predicate,
 )
 from cortex_mcp.graph import (
+    VALID_EPISODE_CATEGORIES,
     BiTemporalMemoryGraph,
     Entity,
     Episode,
     TemporalFact,
-    VALID_EPISODE_CATEGORIES,
 )
 from cortex_mcp.grounding_export import (
     GroundedSourceDocument,
     export_truthgate_sources,
 )
-from cortex_mcp.server import CortexMCPServer, MCP_PROTOCOL_VERSION, SERVER_NAME, SERVER_VERSION
+from cortex_mcp.server import (
+    MCP_PROTOCOL_VERSION,
+    SERVER_NAME,
+    SERVER_VERSION,
+    CortexMCPServer,
+)
 
 __version__ = "1.1.0"
 
 __all__ = [
+    "MCP_PROTOCOL_VERSION",
+    "SERVER_NAME",
+    "SERVER_VERSION",
+    "VALID_EPISODE_CATEGORIES",
     "BiTemporalMemoryGraph",
     "CompiledContextBundle",
     "CompiledContextItem",
     "ContextCompiler",
-    "ContradictionAuditor",
     "ContradictionAuditReport",
+    "ContradictionAuditor",
     "ContradictionFinding",
     "CortexMCPServer",
     "Entity",
     "Episode",
     "GroundedSourceDocument",
-    "MCP_PROTOCOL_VERSION",
-    "SERVER_NAME",
-    "SERVER_VERSION",
     "TemporalFact",
-    "VALID_EPISODE_CATEGORIES",
     "__version__",
     "audit_contradictions",
     "estimate_tokens",

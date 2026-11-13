@@ -5,27 +5,26 @@ from __future__ import annotations
 import io
 import json
 from pathlib import Path
+
 import pytest
 
-from cortex_mcp.cli import build_demo_scenario, main as cli_main, percentile, run_benchmark, run_demo
+from cortex_mcp.cli import build_demo_scenario, percentile, run_benchmark, run_demo
+from cortex_mcp.cli import main as cli_main
 from cortex_mcp.compiler import ContextCompiler, estimate_tokens, tokenize
 from cortex_mcp.graph import (
+    VALID_EPISODE_CATEGORIES,
     BiTemporalMemoryGraph,
-    Entity,
     Episode,
     TemporalFact,
-    VALID_EPISODE_CATEGORIES,
-    compute_sha256,
     parse_iso_timestamp,
 )
 from cortex_mcp.server import (
-    CortexMCPServer,
     INVALID_PARAMS,
     INVALID_REQUEST,
     METHOD_NOT_FOUND,
     PARSE_ERROR,
+    CortexMCPServer,
 )
-
 
 # ============================================================================
 # 1. Bi-Temporal Graph & Entity / Episode Primitives
@@ -204,13 +203,13 @@ def test_idempotent_duplicate_fact_upsert_and_confidence_upgrade() -> None:
 
 def test_non_singular_facts_coexist_without_supersession() -> None:
     graph = BiTemporalMemoryGraph()
-    f1, sup1 = graph.upsert_fact(
+    _f1, sup1 = graph.upsert_fact(
         subject_id="gateway",
         predicate="routes_to",
         object_id="billing_svc",
         singular=False,
     )
-    f2, sup2 = graph.upsert_fact(
+    _f2, sup2 = graph.upsert_fact(
         subject_id="gateway",
         predicate="routes_to",
         object_id="search_svc",

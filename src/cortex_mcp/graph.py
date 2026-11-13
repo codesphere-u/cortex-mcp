@@ -8,13 +8,14 @@ integrity verification without external cloud dependencies.
 from __future__ import annotations
 
 import dataclasses
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
 import hashlib
 import json
-from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple, Union
 import uuid
+from collections.abc import Callable, Iterable
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
 
 
 def utc_now_iso() -> str:
@@ -32,7 +33,7 @@ def parse_iso_timestamp(ts: str) -> datetime:
     return dt.astimezone(timezone.utc)
 
 
-def compute_sha256(payload: Dict[str, Any]) -> str:
+def compute_sha256(payload: dict[str, Any]) -> str:
     """Compute a canonical SHA-256 hex digest over a JSON-serializable dict."""
     canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
@@ -46,14 +47,14 @@ class Entity:
     name: str
     entity_type: str
     summary: str = ""
-    attributes: Dict[str, Any] = field(default_factory=dict)
+    attributes: dict[str, Any] = field(default_factory=dict)
     created_at: str = field(default_factory=utc_now_iso)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return dataclasses.asdict(self)
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Entity":
+    def from_dict(cls, data: dict[str, Any]) -> Entity:
         return cls(
             id=str(data["id"]),
             name=str(data["name"]),
@@ -71,14 +72,14 @@ class TemporalFact:
     id: str
     subject_id: str
     predicate: str
-    object_id: Optional[str] = None
-    object_value: Optional[str] = None
+    object_id: str | None = None
+    object_value: str | None = None
     singular: bool = True
     confidence: float = 1.0
-    source_episode_id: Optional[str] = None
+    source_episode_id: str | None = None
     valid_from: str = field(default_factory=utc_now_iso)
-    valid_until: Optional[str] = None
-    superseded_by: Optional[str] = None
+    valid_until: str | None = None
+    superseded_by: str | None = None
     content_hash: str = ""
 
     def __post_init__(self) -> None:
@@ -110,7 +111,7 @@ class TemporalFact:
         """Return human-readable object representation."""
         return self.object_id if self.object_id is not None else str(self.object_value)
 
-    def is_active_at(self, as_of: Optional[Union[str, datetime]] = None) -> bool:
+    def is_active_at(self, as_of: str | datetime | None = None) -> bool:
         """Return True if the fact is active at `as_of` (or currently active if `as_of` is None)."""
         if as_of is None:
             return self.valid_until is None and self.superseded_by is None
@@ -124,11 +125,11 @@ class TemporalFact:
                 return False
         return True
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return dataclasses.asdict(self)
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "TemporalFact":
+    def from_dict(cls, data: dict[str, Any]) -> TemporalFact:
         return cls(
             id=str(data["id"]),
             subject_id=str(data["subject_id"]),
@@ -158,8 +159,8 @@ class Episode:
     title: str
     category: str
     content: str
-    files_touched: List[str] = field(default_factory=list)
-    entities_mentioned: List[str] = field(default_factory=list)
+    files_touched: list[str] = field(default_factory=list)
+    entities_mentioned: list[str] = field(default_factory=list)
     timestamp: str = field(default_factory=utc_now_iso)
     sha256: str = ""
 
@@ -185,11 +186,11 @@ class Episode:
             }
         )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return dataclasses.asdict(self)
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Episode":
+    def from_dict(cls, data: dict[str, Any]) -> Episode:
         return cls(
             id=str(data["id"]),
             title=str(data["title"]),
@@ -205,14 +206,14 @@ class Episode:
 class BiTemporalMemoryGraph:
     """Local-first bi-temporal entity-relationship and episodic memory graph."""
 
-    def __init__(self, storage_path: Optional[Union[str, Path]] = None) -> None:
-        self.storage_path: Optional[Path] = Path(storage_path) if storage_path else None
-        self.entities: Dict[str, Entity] = {}
-        self.facts: Dict[str, TemporalFact] = {}
-        self.episodes: Dict[str, Episode] = {}
-        self._subject_index: Dict[str, List[str]] = {}
-        self._object_index: Dict[str, List[str]] = {}
-        self._on_change_callbacks: List[Callable[[], None]] = []
+    def __init__(self, storage_path: str | Path | None = None) -> None:
+        self.storage_path: Path | None = Path(storage_path) if storage_path else None
+        self.entities: dict[str, Entity] = {}
+        self.facts: dict[str, TemporalFact] = {}
+        self.episodes: dict[str, Episode] = {}
+        self._subject_index: dict[str, list[str]] = {}
+        self._object_index: dict[str, list[str]] = {}
+        self._on_change_callbacks: list[Callable[[], None]] = []
 
         if self.storage_path and self.storage_path.exists():
             self.load(self.storage_path)
@@ -239,11 +240,11 @@ class BiTemporalMemoryGraph:
     def upsert_entity(
         self,
         entity_id: str,
-        name: Optional[str] = None,
+        name: str | None = None,
         entity_type: str = "component",
         summary: str = "",
-        attributes: Optional[Dict[str, Any]] = None,
-        created_at: Optional[str] = None,
+        attributes: dict[str, Any] | None = None,
+        created_at: str | None = None,
     ) -> Entity:
         """Create or update an entity node in the graph."""
         entity_id = entity_id.strip()
@@ -279,10 +280,10 @@ class BiTemporalMemoryGraph:
         title: str,
         category: str,
         content: str,
-        files_touched: Optional[List[str]] = None,
-        entities_mentioned: Optional[List[str]] = None,
-        episode_id: Optional[str] = None,
-        timestamp: Optional[str] = None,
+        files_touched: list[str] | None = None,
+        entities_mentioned: list[str] | None = None,
+        episode_id: str | None = None,
+        timestamp: str | None = None,
     ) -> Episode:
         """Record an immutable engineering episode and ensure mentioned entities exist."""
         ep_id = episode_id or f"ep_{uuid.uuid4().hex[:10]}"
@@ -315,16 +316,16 @@ class BiTemporalMemoryGraph:
         self,
         subject_id: str,
         predicate: str,
-        object_id: Optional[str] = None,
-        object_value: Optional[str] = None,
+        object_id: str | None = None,
+        object_value: str | None = None,
         singular: bool = True,
         confidence: float = 1.0,
-        source_episode_id: Optional[str] = None,
-        valid_from: Optional[str] = None,
-        fact_id: Optional[str] = None,
+        source_episode_id: str | None = None,
+        valid_from: str | None = None,
+        fact_id: str | None = None,
         subject_type: str = "component",
         object_type: str = "component",
-    ) -> Tuple[TemporalFact, List[TemporalFact]]:
+    ) -> tuple[TemporalFact, list[TemporalFact]]:
         """Insert a fact with automatic bi-temporal conflict detection and supersession.
 
         If an active fact already exists with the exact same `(subject_id, predicate, object)`,
@@ -358,7 +359,7 @@ class BiTemporalMemoryGraph:
             )
 
         existing_fact_ids = self._subject_index.get(subject_id, [])
-        superseded: List[TemporalFact] = []
+        superseded: list[TemporalFact] = []
 
         for fid in existing_fact_ids:
             candidate = self.facts[fid]
@@ -401,12 +402,12 @@ class BiTemporalMemoryGraph:
 
     def get_facts(
         self,
-        subject_id: Optional[str] = None,
-        predicate: Optional[str] = None,
-        object_id: Optional[str] = None,
-        as_of: Optional[Union[str, datetime]] = None,
+        subject_id: str | None = None,
+        predicate: str | None = None,
+        object_id: str | None = None,
+        as_of: str | datetime | None = None,
         include_superseded: bool = False,
-    ) -> List[TemporalFact]:
+    ) -> list[TemporalFact]:
         """Query facts filtered by subject, predicate, object, and temporal state."""
         if subject_id is not None:
             candidate_ids = self._subject_index.get(subject_id, [])
@@ -417,7 +418,7 @@ class BiTemporalMemoryGraph:
         else:
             candidates = self.facts.values()
 
-        results: List[TemporalFact] = []
+        results: list[TemporalFact] = []
         for fact in candidates:
             if subject_id is not None and fact.subject_id != subject_id:
                 continue
@@ -429,9 +430,8 @@ class BiTemporalMemoryGraph:
             if as_of is not None:
                 if not fact.is_active_at(as_of):
                     continue
-            elif not include_superseded:
-                if not fact.is_active_at(None):
-                    continue
+            elif not include_superseded and not fact.is_active_at(None):
+                continue
 
             results.append(fact)
 
@@ -442,7 +442,7 @@ class BiTemporalMemoryGraph:
         entity_id: str,
         include_superseded: bool = True,
         max_hops: int = 1,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Inspect an entity's profile, active facts, superseded history, and K-hop neighborhood."""
         entity = self.entities.get(entity_id)
         outgoing_all = self.get_facts(subject_id=entity_id, include_superseded=True)
@@ -461,7 +461,7 @@ class BiTemporalMemoryGraph:
             or any(f.source_episode_id == ep.id for f in outgoing_all + incoming_all)
         ]
 
-        result: Dict[str, Any] = {
+        result: dict[str, Any] = {
             "exists": entity is not None,
             "entity": entity.to_dict() if entity else {"id": entity_id, "name": entity_id, "entity_type": "unknown"},
             "active_outgoing_facts": active_outgoing,
@@ -476,19 +476,19 @@ class BiTemporalMemoryGraph:
 
     def traverse_subgraph(
         self,
-        seed_entity_ids: Union[str, Iterable[str]],
+        seed_entity_ids: str | Iterable[str],
         max_hops: int = 2,
-        as_of: Optional[Union[str, datetime]] = None,
-    ) -> Dict[str, Any]:
+        as_of: str | datetime | None = None,
+    ) -> dict[str, Any]:
         """Perform a breadth-first K-hop ego-graph traversal over temporally active edges."""
         if isinstance(seed_entity_ids, str):
             seeds = [seed_entity_ids]
         else:
             seeds = list(seed_entity_ids)
 
-        visited_entities: Dict[str, int] = {}
-        traversed_facts: Dict[str, TemporalFact] = {}
-        frontier: List[Tuple[str, int]] = []
+        visited_entities: dict[str, int] = {}
+        traversed_facts: dict[str, TemporalFact] = {}
+        frontier: list[tuple[str, int]] = []
 
         for seed in seeds:
             if seed in self.entities or seed in self._subject_index or seed in self._object_index:
@@ -508,10 +508,9 @@ class BiTemporalMemoryGraph:
                 if not fact.is_active_at(as_of):
                     continue
                 traversed_facts[fact.id] = fact
-                if fact.object_id:
-                    if fact.object_id not in visited_entities:
-                        visited_entities[fact.object_id] = hop + 1
-                        frontier.append((fact.object_id, hop + 1))
+                if fact.object_id and fact.object_id not in visited_entities:
+                    visited_entities[fact.object_id] = hop + 1
+                    frontier.append((fact.object_id, hop + 1))
 
             # Incoming edges
             for fid in self._object_index.get(current_id, []):
@@ -537,7 +536,7 @@ class BiTemporalMemoryGraph:
             "facts": [f.to_dict() for f in traversed_facts.values()],
         }
 
-    def snapshot_as_of(self, as_of: Union[str, datetime]) -> Dict[str, Any]:
+    def snapshot_as_of(self, as_of: str | datetime) -> dict[str, Any]:
         """Return a complete time-travel snapshot of the knowledge graph as of `as_of`."""
         target_dt = parse_iso_timestamp(as_of) if isinstance(as_of, str) else as_of.astimezone(timezone.utc)
         target_iso = target_dt.isoformat()
@@ -576,10 +575,10 @@ class BiTemporalMemoryGraph:
             "episodes": episodes_up_to_then,
         }
 
-    def verify_integrity(self) -> Dict[str, Any]:
+    def verify_integrity(self) -> dict[str, Any]:
         """Verify cryptographic SHA-256 hashes of all episodes and facts."""
-        corrupted_facts: List[str] = []
-        corrupted_episodes: List[str] = []
+        corrupted_facts: list[str] = []
+        corrupted_episodes: list[str] = []
 
         for fid, fact in self.facts.items():
             expected = fact.calculate_hash()
@@ -612,7 +611,7 @@ class BiTemporalMemoryGraph:
             "graph_merkle_digest": state_digest,
         }
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Serialize the complete graph state to a dictionary."""
         return {
             "schema_version": "1.0.0",
@@ -621,7 +620,7 @@ class BiTemporalMemoryGraph:
             "episodes": [ep.to_dict() for ep in self.episodes.values()],
         }
 
-    def save(self, path: Optional[Union[str, Path]] = None) -> Path:
+    def save(self, path: str | Path | None = None) -> Path:
         """Atomically persist the knowledge graph to a JSON file."""
         target = Path(path) if path else self.storage_path
         if target is None:
@@ -634,7 +633,7 @@ class BiTemporalMemoryGraph:
         tmp_path.replace(target)
         return target
 
-    def load(self, path: Optional[Union[str, Path]] = None) -> None:
+    def load(self, path: str | Path | None = None) -> None:
         """Load the knowledge graph state from a persisted JSON file."""
         target = Path(path) if path else self.storage_path
         if target is None or not target.exists():

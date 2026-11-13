@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+
 import pytest
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -36,8 +37,9 @@ def test_portal_html_render():
 
 
 def test_fastapi_portal_endpoints():
-    fastapi = pytest.importorskip("fastapi")
+    pytest.importorskip("fastapi")
     from fastapi.testclient import TestClient
+
     from api.index import app
 
     client = TestClient(app)

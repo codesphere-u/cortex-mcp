@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   test-and-benchmark:
-    name: Python ${{ matrix.python-version }} (Test + Benchmark + Demo)
+    name: Python ${{ matrix.python-version }} (Lint + Typecheck + Test + Benchmark)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -33,9 +33,14 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -e ".[dev]"
 
-      - name: Run Pytest suite (84 tests)
+      - name: Run Ruff lint & Mypy static type-check gates
         run: |
-          pytest -v
+          ruff check .
+          mypy src/cortex_mcp api
+
+      - name: Run Pytest suite with coverage
+        run: |
+          pytest -v --cov=cortex_mcp --cov-report=term-missing --cov-fail-under=85
 
       - name: Run CLI multi-session memory demo
         run: |

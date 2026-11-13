@@ -20,19 +20,19 @@ def main() -> dict:
     graph = BiTemporalMemoryGraph()
 
     # 1. Register architectural entities
-    auth_service = graph.upsert_entity(
+    graph.upsert_entity(
         entity_id="auth_service",
         entity_type="service",
         attributes={"runtime": "python3.12", "team": "security"},
     )
-    db_service = graph.upsert_entity(
+    graph.upsert_entity(
         entity_id="primary_database",
         entity_type="database",
         attributes={"engine": "sqlite-wal"},
     )
 
     # 2. Record an architectural decision episode (ADR)
-    adr_ep = graph.record_episode(
+    graph.record_episode(
         title="ADR-019: Token Standard Migration to PASETO v4",
         category="adr",
         content="JWT HS256 was vulnerable to algorithm-confusion attacks. We now enforce PASETO v4.",
@@ -50,7 +50,7 @@ def main() -> dict:
     )
 
     # Fact 2: New fact (PASETO_v4_public) - automatically supersedes old fact
-    new_fact, superseded = graph.upsert_fact(
+    new_fact, _ = graph.upsert_fact(
         subject_id="auth_service",
         predicate="uses_token_format",
         object_value="PASETO_v4_public",

@@ -7,14 +7,13 @@ in-memory transports, exposing bi-temporal memory tools, resources, and prompts.
 from __future__ import annotations
 
 import json
-from pathlib import Path
 import sys
-from typing import Any, Dict, IO, List, Optional, Union
+from pathlib import Path
+from typing import IO, Any
 
 from cortex_mcp.compiler import ContextCompiler
 from cortex_mcp.contradictions import audit_contradictions
-from cortex_mcp.graph import BiTemporalMemoryGraph, VALID_EPISODE_CATEGORIES
-from cortex_mcp.grounding_export import export_truthgate_sources
+from cortex_mcp.graph import VALID_EPISODE_CATEGORIES, BiTemporalMemoryGraph
 
 MCP_PROTOCOL_VERSION = "2024-11-05"
 SERVER_NAME = "cortex-mcp"
@@ -33,14 +32,14 @@ class CortexMCPServer:
 
     def __init__(
         self,
-        graph: Optional[BiTemporalMemoryGraph] = None,
-        storage_path: Optional[Union[str, Path]] = None,
+        graph: BiTemporalMemoryGraph | None = None,
+        storage_path: str | Path | None = None,
     ) -> None:
         self.graph = graph or BiTemporalMemoryGraph(storage_path=storage_path)
         self.compiler = ContextCompiler(self.graph)
         self.initialized = False
 
-    def get_tool_definitions(self) -> List[Dict[str, Any]]:
+    def get_tool_definitions(self) -> list[dict[str, Any]]:
         """Return the 6 MCP tool definitions with concise, strict JSON schemas."""
         return [
             {
@@ -217,7 +216,7 @@ class CortexMCPServer:
             },
         ]
 
-    def get_resource_definitions(self) -> List[Dict[str, Any]]:
+    def get_resource_definitions(self) -> list[dict[str, Any]]:
         """Return MCP resource descriptors."""
         return [
             {
@@ -240,7 +239,7 @@ class CortexMCPServer:
             },
         ]
 
-    def get_prompt_definitions(self) -> List[Dict[str, Any]]:
+    def get_prompt_definitions(self) -> list[dict[str, Any]]:
         """Return MCP prompt templates."""
         return [
             {
@@ -272,7 +271,7 @@ class CortexMCPServer:
             },
         ]
 
-    def _call_tool(self, name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    def _call_tool(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         """Dispatch an MCP `tools/call` invocation."""
         if name == "memory_record_episode":
             episode = self.graph.record_episode(
@@ -283,7 +282,7 @@ class CortexMCPServer:
                 entities_mentioned=arguments.get("entities_mentioned"),
                 timestamp=arguments.get("timestamp"),
             )
-            payload = {
+            payload: dict[str, Any] = {
                 "status": "recorded",
                 "episode": episode.to_dict(),
             }
@@ -344,7 +343,7 @@ class CortexMCPServer:
         raise KeyError(f"Unknown tool: {name}")
 
     @staticmethod
-    def _tool_response(payload: Dict[str, Any], is_error: bool = False) -> Dict[str, Any]:
+    def _tool_response(payload: dict[str, Any], is_error: bool = False) -> dict[str, Any]:
         return {
             "content": [
                 {
@@ -356,7 +355,7 @@ class CortexMCPServer:
             "isError": is_error,
         }
 
-    def _read_resource(self, uri: str) -> Dict[str, Any]:
+    def _read_resource(self, uri: str) -> dict[str, Any]:
         if uri == "cortex://graph/summary":
             integrity = self.graph.verify_integrity()
             summary = {
@@ -409,7 +408,7 @@ class CortexMCPServer:
 
         raise KeyError(f"Resource URI not found: {uri}")
 
-    def _get_prompt(self, name: str, arguments: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def _get_prompt(self, name: str, arguments: dict[str, Any] | None = None) -> dict[str, Any]:
         args = arguments or {}
         if name == "architecture-briefing":
             component = str(args.get("component", "")).strip()
@@ -456,7 +455,7 @@ class CortexMCPServer:
 
         raise KeyError(f"Unknown prompt: {name}")
 
-    def handle_request(self, message: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def handle_request(self, message: dict[str, Any]) -> dict[str, Any] | None:
         """Process a single JSON-RPC 2.0 request or notification dictionary.
 
         Returns None for notifications (messages without an `id`).
@@ -595,14 +594,14 @@ class CortexMCPServer:
                 "id": msg_id,
                 "error": {"code": METHOD_NOT_FOUND, "message": f"Method not found: {method}"},
             }
-        except Exception as exc:  # pragma: no cover - defensive guard
+        except Exception as exc:  # noqa: BLE001  # pragma: no cover - defensive guard
             return {
                 "jsonrpc": "2.0",
                 "id": msg_id,
                 "error": {"code": INTERNAL_ERROR, "message": str(exc)},
             }
 
-    def handle_raw_line(self, line: str) -> Optional[str]:
+    def handle_raw_line(self, line: str) -> str | None:
         """Parse a single line of JSON-RPC 2.0 input and return a JSON response line (or None)."""
         stripped = line.strip()
         if not stripped:
@@ -624,8 +623,8 @@ class CortexMCPServer:
 
     def serve_stdio(
         self,
-        stdin: Optional[IO[str]] = None,
-        stdout: Optional[IO[str]] = None,
+        stdin: IO[str] | None = None,
+        stdout: IO[str] | None = None,
     ) -> None:
         """Run the MCP server loop over line-delimited JSON-RPC 2.0 stdio."""
         in_stream = stdin or sys.stdin

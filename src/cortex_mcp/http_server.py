@@ -8,10 +8,10 @@ on platforms such as Glama.ai, Fly.io, Cloudflare, and Docker containers.
 from __future__ import annotations
 
 import json
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import logging
-from typing import Optional, TYPE_CHECKING
 import uuid
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from cortex_mcp.server import CortexMCPServer
@@ -62,7 +62,7 @@ class CortexHTTPHandler(BaseHTTPRequestHandler):
             self.end_headers()
 
             # MCP SSE handshake: inform client of the messages POST endpoint
-            endpoint_msg = f"event: endpoint\ndata: /messages?session_id={session_id}\n\n".encode("utf-8")
+            endpoint_msg = f"event: endpoint\ndata: /messages?session_id={session_id}\n\n".encode()
             self.wfile.write(endpoint_msg)
             self.wfile.flush()
             return
@@ -80,7 +80,7 @@ class CortexHTTPHandler(BaseHTTPRequestHandler):
         try:
             raw_data = self.rfile.read(content_length).decode("utf-8")
             payload = json.loads(raw_data)
-        except Exception as e:
+        except (OSError, UnicodeDecodeError, ValueError) as e:
             self._send_error(400, f"Malformed JSON: {e}")
             return
 
@@ -123,7 +123,6 @@ class CortexHTTPHandler(BaseHTTPRequestHandler):
 
     def log_message(self, format: str, *args: object) -> None:
         """Quiet default logging."""
-        pass
 
 
 def run_http_server(

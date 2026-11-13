@@ -10,12 +10,12 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+
 import pytest
 
 from cortex_mcp import (
     BiTemporalMemoryGraph,
     ContextCompiler,
-    ContradictionAuditor,
     ContradictionAuditReport,
     CortexMCPServer,
     __version__,
@@ -23,7 +23,8 @@ from cortex_mcp import (
     export_truthgate_sources,
     normalize_predicate,
 )
-from cortex_mcp.cli import build_demo_scenario, main as cli_main
+from cortex_mcp.cli import build_demo_scenario
+from cortex_mcp.cli import main as cli_main
 from cortex_mcp.mcp_server import SERVER_VERSION
 
 

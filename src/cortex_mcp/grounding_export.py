@@ -15,13 +15,19 @@ stale-fact leakage!
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
 import json
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 from cortex_mcp.compiler import CompiledContextBundle, ContextCompiler
-from cortex_mcp.graph import BiTemporalMemoryGraph, Episode, Entity, TemporalFact, compute_sha256
+from cortex_mcp.graph import (
+    BiTemporalMemoryGraph,
+    Entity,
+    Episode,
+    TemporalFact,
+    compute_sha256,
+)
 
 
 @dataclass(frozen=True)
@@ -31,9 +37,9 @@ class GroundedSourceDocument:
     source_id: str
     title: str
     content: str
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "source_id": self.source_id,
             "title": self.title,
@@ -45,13 +51,13 @@ class GroundedSourceDocument:
 def _fact_to_source_document(
     fact: TemporalFact,
     graph_merkle_digest: str,
-    score: Optional[float] = None,
+    score: float | None = None,
 ) -> GroundedSourceDocument:
     pred_phrase = fact.predicate.replace("_", " ")
     natural_sentence = (
         f"{fact.subject_id} {fact.predicate} ({pred_phrase}) is {fact.target_display}."
     )
-    meta: Dict[str, Any] = {
+    meta: dict[str, Any] = {
         "item_type": "fact",
         "fact_id": fact.id,
         "subject_id": fact.subject_id,
@@ -80,9 +86,9 @@ def _fact_to_source_document(
 def _episode_to_source_document(
     ep: Episode,
     graph_merkle_digest: str,
-    score: Optional[float] = None,
+    score: float | None = None,
 ) -> GroundedSourceDocument:
-    meta: Dict[str, Any] = {
+    meta: dict[str, Any] = {
         "item_type": "episode",
         "episode_id": ep.id,
         "category": ep.category,
@@ -106,10 +112,10 @@ def _episode_to_source_document(
 def _entity_to_source_document(
     ent: Entity,
     graph_merkle_digest: str,
-    score: Optional[float] = None,
+    score: float | None = None,
 ) -> GroundedSourceDocument:
     ent_hash = compute_sha256(ent.to_dict())
-    meta: Dict[str, Any] = {
+    meta: dict[str, Any] = {
         "item_type": "entity",
         "entity_id": ent.id,
         "entity_type": ent.entity_type,
@@ -131,14 +137,14 @@ def _entity_to_source_document(
 def export_truthgate_sources(
     graph: BiTemporalMemoryGraph,
     *,
-    query: Optional[str] = None,
-    bundle: Optional[CompiledContextBundle] = None,
+    query: str | None = None,
+    bundle: CompiledContextBundle | None = None,
     max_tokens: int = 1200,
     include_superseded: bool = False,
     include_episodes: bool = True,
-    as_of: Optional[str] = None,
-    output_path: Optional[Union[str, Path]] = None,
-) -> List[Dict[str, Any]]:
+    as_of: str | None = None,
+    output_path: str | Path | None = None,
+) -> list[dict[str, Any]]:
     """
     Export active facts (and optionally episodes/entities) or a compiled context
     packet as a `TruthGate`-compatible `SourceDocument` JSON list.
@@ -149,7 +155,7 @@ def export_truthgate_sources(
     """
     integrity = graph.verify_integrity()
     merkle_digest = integrity["graph_merkle_digest"]
-    documents: List[GroundedSourceDocument] = []
+    documents: list[GroundedSourceDocument] = []
 
     if bundle is None and query is not None:
         compiler = ContextCompiler(graph)

@@ -26,9 +26,9 @@ lower-confidence conflicting fact in place.
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
 import re
-from typing import Any, Dict, List, Literal, Optional, Sequence, Set, Tuple
+from dataclasses import asdict, dataclass, field
+from typing import Any, Literal
 
 from cortex_mcp.graph import BiTemporalMemoryGraph, TemporalFact, parse_iso_timestamp
 
@@ -40,7 +40,7 @@ ConflictKind = Literal[
     "unsuperseded_value_conflict",
 ]
 
-NEGATION_PREFIXES: Tuple[str, ...] = (
+NEGATION_PREFIXES: tuple[str, ...] = (
     "does_not_",
     "do_not_",
     "must_not_",
@@ -55,7 +55,7 @@ NEGATION_PREFIXES: Tuple[str, ...] = (
     "prohibits_",
 )
 
-NEGATION_TOKENS: Set[str] = {
+NEGATION_TOKENS: set[str] = {
     "not",
     "never",
     "no",
@@ -72,7 +72,7 @@ NEGATION_TOKENS: Set[str] = {
     "without",
 }
 
-ANTONYM_PAIRS: Tuple[Tuple[str, str], ...] = (
+ANTONYM_PAIRS: tuple[tuple[str, str], ...] = (
     ("enabled", "disabled"),
     ("enable", "disable"),
     ("true", "false"),
@@ -108,7 +108,7 @@ ANTONYM_PAIRS: Tuple[Tuple[str, str], ...] = (
     ("deterministic", "nondeterministic"),
 )
 
-PREDICATE_VERB_PREFIXES: Tuple[str, ...] = (
+PREDICATE_VERB_PREFIXES: tuple[str, ...] = (
     "uses_",
     "use_",
     "has_",
@@ -127,7 +127,7 @@ PREDICATE_VERB_PREFIXES: Tuple[str, ...] = (
     "allow_",
 )
 
-PREDICATE_SYNONYM_MAP: Dict[str, str] = {
+PREDICATE_SYNONYM_MAP: dict[str, str] = {
     "auth_token": "token_format",
     "token_type": "token_format",
     "session_token": "token_format",
@@ -146,7 +146,7 @@ PREDICATE_SYNONYM_MAP: Dict[str, str] = {
 }
 
 
-def normalize_predicate(predicate: str) -> Tuple[str, bool]:
+def normalize_predicate(predicate: str) -> tuple[str, bool]:
     """
     Normalize a predicate into `(canonical_predicate, is_negated)`.
 
@@ -180,11 +180,11 @@ def normalize_predicate(predicate: str) -> Tuple[str, bool]:
     return canonical, is_negated
 
 
-def _extract_tokens(text: str) -> Set[str]:
+def _extract_tokens(text: str) -> set[str]:
     return {t.lower() for t in re.findall(r"[a-zA-Z0-9]+", text.lower()) if t}
 
 
-def _check_object_antonym_or_negation(val_a: str, val_b: str) -> Tuple[bool, Optional[str]]:
+def _check_object_antonym_or_negation(val_a: str, val_b: str) -> tuple[bool, str | None]:
     """
     Check if two object strings exhibit opposite negation polarity or antonym opposition.
     Returns `(is_opposing, reason_detail)`.
@@ -206,7 +206,7 @@ def _check_object_antonym_or_negation(val_a: str, val_b: str) -> Tuple[bool, Opt
     return False, None
 
 
-def _pick_winner_and_loser(fact_a: TemporalFact, fact_b: TemporalFact) -> Tuple[TemporalFact, TemporalFact, str]:
+def _pick_winner_and_loser(fact_a: TemporalFact, fact_b: TemporalFact) -> tuple[TemporalFact, TemporalFact, str]:
     """
     Determine which conflicting fact should be retained (`winner`) and which should
     be superseded (`loser`), based on confidence first, then `valid_from` recency.
@@ -216,14 +216,18 @@ def _pick_winner_and_loser(fact_a: TemporalFact, fact_b: TemporalFact) -> Tuple[
             return (
                 fact_a,
                 fact_b,
-                f"Retain `{fact_a.id}` (higher confidence {fact_a.confidence:.2f} > {fact_b.confidence:.2f}) "
-                f"and supersede `{fact_b.id}`.",
+                (
+                    f"Retain `{fact_a.id}` (higher confidence {fact_a.confidence:.2f} > {fact_b.confidence:.2f}) "
+                    f"and supersede `{fact_b.id}`."
+                ),
             )
         return (
             fact_b,
             fact_a,
-            f"Retain `{fact_b.id}` (higher confidence {fact_b.confidence:.2f} > {fact_a.confidence:.2f}) "
-            f"and supersede `{fact_a.id}`.",
+            (
+                f"Retain `{fact_b.id}` (higher confidence {fact_b.confidence:.2f} > {fact_a.confidence:.2f}) "
+                f"and supersede `{fact_a.id}`."
+            ),
         )
 
     dt_a = parse_iso_timestamp(fact_a.valid_from)
@@ -259,7 +263,7 @@ class ContradictionFinding:
     recommended_supersede_id: str
     recommended_resolution: str
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
@@ -273,11 +277,11 @@ class ContradictionAuditReport:
     high_count: int
     medium_count: int
     clean: bool
-    conflicts: List[ContradictionFinding] = field(default_factory=list)
-    resolved_fact_ids: List[str] = field(default_factory=list)
+    conflicts: list[ContradictionFinding] = field(default_factory=list)
+    resolved_fact_ids: list[str] = field(default_factory=list)
     summary_markdown: str = ""
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "active_facts_scanned": self.active_facts_scanned,
             "contradiction_count": self.contradiction_count,
@@ -302,7 +306,7 @@ class ContradictionAuditor:
     def audit(
         self,
         *,
-        as_of: Optional[str] = None,
+        as_of: str | None = None,
         auto_resolve: bool = False,
     ) -> ContradictionAuditReport:
         """
@@ -316,13 +320,13 @@ class ContradictionAuditor:
         active_facts.sort(key=lambda f: (f.subject_id, f.predicate, f.id))
 
         # Group active facts by (subject_id, canonical_predicate)
-        groups: Dict[Tuple[str, str], List[Tuple[TemporalFact, bool]]] = {}
+        groups: dict[tuple[str, str], list[tuple[TemporalFact, bool]]] = {}
         for fact in active_facts:
             canon_pred, is_neg_pred = normalize_predicate(fact.predicate)
             groups.setdefault((fact.subject_id, canon_pred), []).append((fact, is_neg_pred))
 
-        findings: List[ContradictionFinding] = []
-        resolved_ids: List[str] = []
+        findings: list[ContradictionFinding] = []
+        resolved_ids: list[str] = []
         conflict_seq = 0
 
         for (subj_id, canon_pred), items in sorted(groups.items()):
@@ -338,7 +342,7 @@ class ContradictionAuditor:
 
                     is_obj_opposing, obj_reason = _check_object_antonym_or_negation(val_a, val_b)
 
-                    kind: Optional[ConflictKind] = None
+                    kind: ConflictKind | None = None
                     severity: ConflictSeverity = "HIGH"
                     explanation = ""
 
@@ -456,7 +460,7 @@ class ContradictionAuditor:
 def audit_contradictions(
     graph: BiTemporalMemoryGraph,
     *,
-    as_of: Optional[str] = None,
+    as_of: str | None = None,
     auto_resolve: bool = False,
 ) -> ContradictionAuditReport:
     """Convenience function to run `ContradictionAuditor(graph).audit(...)`."""
