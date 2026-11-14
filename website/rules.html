@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MCP Tools, Resources &amp; Contradiction Rules — Cortex-MCP</title>
+  <meta name="description" content="Filterable specification of all 7 Cortex-MCP JSON-RPC 2.0 tools, 4 contradiction audit classes, 3 MCP resources, and 2 prompt templates." />
+  <link rel="canonical" href="https://codesphere-u.github.io/cortex-mcp/rules.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="MCP Tools, Resources &amp; Contradiction Rules — Cortex-MCP" />
+  <meta property="og:description" content="Complete reference of Cortex-MCP tools, contradiction detection rules, resources, and prompts." />
+  <meta property="og:image" content="https://codesphere-u.github.io/cortex-mcp/og-image.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-col">
+    <header class="site-header">
+      <a class="brand-mark" href="index.html">
+        <svg class="brand-mascot" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <rect width="64" height="64" rx="16" fill="#064e3b"/>
+          <path d="M18 32h28M32 16v32" stroke="#d1fae5" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+          <path d="M18 32c6-12 22-12 28 0" stroke="#059669" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M18 32c6 12 22 12 28 0" stroke="#d97706" stroke-width="3.5" stroke-linecap="round"/>
+          <circle cx="18" cy="32" r="5" fill="#d1fae5" stroke="#059669" stroke-width="2.5"/>
+          <circle cx="32" cy="18" r="5" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>
+          <circle cx="46" cy="32" r="5" fill="#d1fae5" stroke="#059669" stroke-width="2.5"/>
+          <circle cx="32" cy="46" r="4" fill="#059669"/>
+        </svg>
+        <svg class="brand-wordmark-svg" width="196" height="36" viewBox="0 0 196 36" role="img" aria-label="Cortex-MCP">
+          <text x="98" y="27" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="25" font-weight="700" fill="#161d1a">Cortex-MCP</text>
+        </svg>
+        <span class="sr-only">Cortex-MCP</span>
+      </a>
+      <nav class="site-nav" aria-label="Primary Navigation">
+        <a href="index.html">Home</a>
+        <a href="studio.html">Studio</a>
+        <a href="proof.html">Benchmarks</a>
+        <a href="rules.html" class="active">MCP &amp; Rules</a>
+        <a href="docs.html">Docs</a>
+        <a href="https://github.com/codesphere-u/cortex-mcp">GitHub</a>
+      </nav>
+    </header>
+
+    <main>
+      <p class="hero-kicker">Protocol &amp; Audit Catalog</p>
+      <h1 class="hero-title" style="font-size:2rem;">7 MCP Tools, 4 Conflict Classes &amp; Resources</h1>
+      <p id="rulesCount" style="color:var(--muted);margin-bottom:14px;"></p>
+
+      <div class="rules-filter">
+        <input id="rulesSearch" class="handy-input" style="flex:1 1 240px;" type="search" placeholder="Search tools, conflict classes, resources..." />
+        <select id="rulesCategory" class="handy-select" style="flex:0 0 190px;">
+          <option value="all">All Categories</option>
+          <option value="tool">MCP Tools (7)</option>
+          <option value="conflict">Contradictions (4)</option>
+          <option value="resource">Resources &amp; Prompts (5)</option>
+        </select>
+      </div>
+
+      <article class="rule-card" data-rule-card data-cat="tool">
+        <span class="rule-id">TOOL &middot; memory_record_episode</span>
+        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Record Immutable Engineering Episode</h2>
+        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Stores an ADR, bug root cause, invariant, migration, incident, or session note linked to files and entity IDs.</p>
+      </article>
+      <article class="rule-card" data-rule-card data-cat="tool">
+        <span class="rule-id">TOOL &middot; memory_upsert_fact</span>
+        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Upsert Bi-Temporal Fact</h2>
+        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Writes <code>(subject_id, predicate, object)</code> with automatic supersession when <code>singular=True</code>.</p>
+      </article>
+      <article class="rule-card" data-rule-card data-cat="tool">
+        <span class="rule-id">TOOL &middot; memory_compile_context</span>
+        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Compile Token-Budgeted Context</h2>
+        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Ranks active facts and episodes using Okapi BM25 + 2-hop spreading activation within <code>max_tokens</code>.</p>
+      </article>
+      <article class="rule-card" data-rule-card data-cat="tool">
+        <span class="rule-id">TOOL &middot; memory_query_entity</span>
+        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Inspect Entity Ego-Graph</h2>
+        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Retrieves active and optional historical edges around any service, file, or component ID.</p>
+      </article>
+      <article class="rule-card" data-rule-card data-cat="tool">
+        <span class="rule-id">TOOL &middot; memory_time_travel</span>
+        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Point-in-Time Snapshot (<code>as_of</code>)</h2>
+        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Reconstructs the exact valid knowledge graph at any past ISO-8601 UTC timestamp.</p>
+      </article>
+      <article class="rule-card" data-rule-card data-cat="tool">
+        <span class="rule-id">TOOL &middot; memory_verify_integrity</span>
+        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Verify SHA-256 Merkle Chain</h2>
+        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Recomputes cryptographic hashes across every stored fact and episode to verify tamper-free persistence.</p>
+      </article>
+      <article class="rule-card" data-rule-card data-cat="tool">
+        <span class="rule-id">TOOL &middot; cortex_audit_contradictions</span>
+        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Audit &amp; Auto-Resolve Conflicts</h2>
+        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Scans active facts for polarity, antonym, alias, or singular drift conflicts and optionally supersedes older claims.</p>
+      </article>
+
+      <article class="rule-card" data-rule-card data-cat="conflict">
+        <span class="rule-id">CRITICAL &middot; negation_polarity_conflict</span>
+        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Negation Polarity Conflict</h2>
+        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Flags pairs like <code>does_not_use_session_cookie</code> vs <code>uses_session_cookie</code> on the same subject.</p>
+      </article>
+      <article class="rule-card" data-rule-card data-cat="conflict">
+        <span class="rule-id">CRITICAL &middot; antonym_object_conflict</span>
+        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Opposing Antonym Object Conflict</h2>
+        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Detects opposing state pairs such as <code>stateful</code> vs <code>stateless</code>, <code>encrypted</code> vs <code>plaintext</code>, or <code>enabled</code> vs <code>disabled</code>.</p>
+      </article>
+      <article class="rule-card" data-rule-card data-cat="conflict">
+        <span class="rule-id">HIGH &middot; predicate_alias_conflict</span>
+        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Canonical Predicate Alias Collision</h2>
+        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Normalizes surface variants (e.g., <code>requires_isolation</code> vs <code>isolation_level</code>) that assert conflicting objects.</p>
+      </article>
+      <article class="rule-card" data-rule-card data-cat="conflict">
+        <span class="rule-id">HIGH &middot; unsuperseded_value_conflict</span>
+        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Unsuperseded Singular Value Drift</h2>
+        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Catches concurrent active facts with divergent values written with <code>singular=False</code>.</p>
+      </article>
+
+      <article class="rule-card" data-rule-card data-cat="resource">
+        <span class="rule-id">RESOURCE &middot; cortex://graph/stats</span>
+        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Graph Counts &amp; Schema Summary</h2>
+        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Live entity, episode, active fact, and superseded fact counts.</p>
+      </article>
+      <article class="rule-card" data-rule-card data-cat="resource">
+        <span class="rule-id">RESOURCE &middot; cortex://graph/integrity</span>
+        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Cryptographic Integrity Report</h2>
+        <p style="margin:0;font-size:0.9rem;color:var(--muted);">JSON SHA-256 verification status and Merkle root digest.</p>
+      </article>
+      <article class="rule-card" data-rule-card data-cat="resource">
+        <span class="rule-id">RESOURCE &middot; cortex://episodes/recent</span>
+        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Recent Engineering Episodes</h2>
+        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Latest ADRs, invariants, and root-cause records persisted to the graph.</p>
+      </article>
+      <article class="rule-card" data-rule-card data-cat="resource">
+        <span class="rule-id">PROMPT &middot; architecture-briefing</span>
+        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Component Architecture Briefing</h2>
+        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Compiles a token-budgeted briefing for a target service or module ID.</p>
+      </article>
+      <article class="rule-card" data-rule-card data-cat="resource">
+        <span class="rule-id">PROMPT &middot; bug-investigation-context</span>
+        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Bug Investigation Context</h2>
+        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Retrieves invariants, historical root causes, and dependencies for a symptom.</p>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <span>Cortex-MCP v1.2.0 &middot; MIT License</span>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="studio.html">Studio</a>
+        <a href="docs.html">Docs</a>
+      </div>
+    </footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

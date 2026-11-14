@@ -1,0 +1,12 @@
+# Cortex-MCP
+
+> Bi-temporal knowledge graph, Okapi BM25 token-budgeted context compiler, semantic contradiction auditor, and TruthGate GroundedSourceDocument exporter for AI coding agents.
+
+- Website: https://codesphere-u.github.io/cortex-mcp/
+- Studio: https://codesphere-u.github.io/cortex-mcp/studio.html
+- Benchmarks: https://codesphere-u.github.io/cortex-mcp/proof.html
+- MCP & Contradiction Rules: https://codesphere-u.github.io/cortex-mcp/rules.html
+- Docs: https://codesphere-u.github.io/cortex-mcp/docs.html
+- Hosted MCP Endpoint: https://cortex-mcp-steel.vercel.app/mcp
+- Source Code: https://github.com/codesphere-u/cortex-mcp
+- Full Context: https://codesphere-u.github.io/cortex-mcp/llms-full.txt

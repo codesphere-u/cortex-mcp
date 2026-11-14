@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bi-Temporal Memory Studio — Cortex-MCP</title>
+  <meta name="description" content="Simulate bi-temporal supersession, as_of time-travel snapshots, contradiction polarity audits, and TruthGate GroundedSourceDocument exports." />
+  <link rel="canonical" href="https://codesphere-u.github.io/cortex-mcp/studio.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Bi-Temporal Memory Studio — Cortex-MCP" />
+  <meta property="og:description" content="Interactive simulator for Cortex-MCP temporal supersession, contradiction auditing, and TruthGate export." />
+  <meta property="og:image" content="https://codesphere-u.github.io/cortex-mcp/og-image.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-col">
+    <header class="site-header">
+      <a class="brand-mark" href="index.html">
+        <svg class="brand-mascot" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <rect width="64" height="64" rx="16" fill="#064e3b"/>
+          <path d="M18 32h28M32 16v32" stroke="#d1fae5" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+          <path d="M18 32c6-12 22-12 28 0" stroke="#059669" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M18 32c6 12 22 12 28 0" stroke="#d97706" stroke-width="3.5" stroke-linecap="round"/>
+          <circle cx="18" cy="32" r="5" fill="#d1fae5" stroke="#059669" stroke-width="2.5"/>
+          <circle cx="32" cy="18" r="5" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>
+          <circle cx="46" cy="32" r="5" fill="#d1fae5" stroke="#059669" stroke-width="2.5"/>
+          <circle cx="32" cy="46" r="4" fill="#059669"/>
+        </svg>
+        <svg class="brand-wordmark-svg" width="196" height="36" viewBox="0 0 196 36" role="img" aria-label="Cortex-MCP">
+          <text x="98" y="27" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="25" font-weight="700" fill="#161d1a">Cortex-MCP</text>
+        </svg>
+        <span class="sr-only">Cortex-MCP</span>
+      </a>
+      <nav class="site-nav" aria-label="Primary Navigation">
+        <a href="index.html">Home</a>
+        <a href="studio.html" class="active">Studio</a>
+        <a href="proof.html">Benchmarks</a>
+        <a href="rules.html">MCP &amp; Rules</a>
+        <a href="docs.html">Docs</a>
+        <a href="https://github.com/codesphere-u/cortex-mcp">GitHub</a>
+      </nav>
+    </header>
+
+    <main>
+      <p class="hero-kicker">Interactive Simulator</p>
+      <h1 class="hero-title" style="font-size:2rem;">Bi-Temporal &amp; Contradiction Studio</h1>
+      <p style="color:var(--muted);margin-bottom:20px;">Switch scenarios, travel across valid-time dates, toggle automatic conflict supersession, and inspect TruthGate <code>SourceDocument</code> output.</p>
+
+      <div class="handy-card">
+        <div class="preset-bar">
+          <button type="button" class="preset-chip active" data-preset="supersession">Auth Supersession + Polarity</button>
+          <button type="button" class="preset-chip" data-preset="antonym">Antonym + Alias Drift</button>
+          <button type="button" class="preset-chip" data-preset="briefing">Clean 2-Hop Briefing</button>
+        </div>
+
+        <div class="studio-grid" style="margin-bottom:14px;">
+          <div>
+            <label class="field-label" for="studioQuery">Context Query</label>
+            <input id="studioQuery" class="handy-input" type="text" />
+          </div>
+          <div>
+            <label class="field-label" for="studioAsOf">Time-Travel Snapshot (<code>as_of</code>)</label>
+            <select id="studioAsOf" class="handy-select">
+              <option value="2026-01-15">2026-01-15 (Initial State)</option>
+              <option value="2026-02-20">2026-02-20 (Post PASETO Migration)</option>
+              <option value="2026-03-15" selected>2026-03-15 (Current Head)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="studio-grid" style="margin-bottom:14px;">
+          <div>
+            <label class="field-label" for="studioBudget">Token Budget (240 &ndash; 1200)</label>
+            <input id="studioBudget" class="handy-input" type="number" min="240" max="1200" step="40" value="320" />
+          </div>
+          <div style="display:flex;align-items:flex-end;gap:12px;">
+            <label style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;cursor:pointer;">
+              <input id="studioAutoResolve" type="checkbox" />
+              Enable <code>auto_resolve=True</code>
+            </label>
+            <button id="studioRunBtn" type="button" class="btn-primary btn-sm">Run Audit</button>
+          </div>
+        </div>
+
+        <label class="field-label" for="studioFactsJson">Temporal Facts Graph (Editable JSON)</label>
+        <textarea id="studioFactsJson" class="handy-textarea"></textarea>
+      </div>
+
+      <section class="handy-card soft">
+        <h2 style="font-family:Georgia,serif;margin:0 0 12px;font-size:1.25rem;">Compiled Context &amp; Contradiction Audit</h2>
+        <div id="studioOutput"></div>
+      </section>
+
+      <section class="handy-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+          <h2 style="font-family:Georgia,serif;margin:0;font-size:1.15rem;">TruthGate <code>GroundedSourceDocument</code> Export</h2>
+          <button type="button" class="copy-mini" onclick="copyText(document.getElementById('studioTruthGateOut').textContent)">Copy JSON</button>
+        </div>
+        <pre id="studioTruthGateOut"></pre>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>Cortex-MCP v1.2.0 &middot; MIT License</span>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="proof.html">Benchmarks</a>
+        <a href="docs.html">Docs</a>
+      </div>
+    </footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

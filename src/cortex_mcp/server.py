@@ -17,7 +17,7 @@ from cortex_mcp.graph import VALID_EPISODE_CATEGORIES, BiTemporalMemoryGraph
 
 MCP_PROTOCOL_VERSION = "2024-11-05"
 SERVER_NAME = "cortex-mcp"
-SERVER_VERSION = "1.1.0"
+SERVER_VERSION = "1.2.0"
 
 # Standard JSON-RPC 2.0 error codes
 PARSE_ERROR = -32700

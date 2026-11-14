@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Benchmarks &amp; Proof — Cortex-MCP</title>
+  <meta name="description" content="Reproducible latency and stale-fact suppression benchmarks from cortex-mcp benchmark and cortex-mcp demo across 500 facts and 100 episodes." />
+  <link rel="canonical" href="https://codesphere-u.github.io/cortex-mcp/proof.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Benchmarks &amp; Proof — Cortex-MCP" />
+  <meta property="og:description" content="Observed P50/P95 latencies, 100% stale-fact suppression, and SHA-256 Merkle chain verification proof." />
+  <meta property="og:image" content="https://codesphere-u.github.io/cortex-mcp/og-image.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-col">
+    <header class="site-header">
+      <a class="brand-mark" href="index.html">
+        <svg class="brand-mascot" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <rect width="64" height="64" rx="16" fill="#064e3b"/>
+          <path d="M18 32h28M32 16v32" stroke="#d1fae5" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+          <path d="M18 32c6-12 22-12 28 0" stroke="#059669" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M18 32c6 12 22 12 28 0" stroke="#d97706" stroke-width="3.5" stroke-linecap="round"/>
+          <circle cx="18" cy="32" r="5" fill="#d1fae5" stroke="#059669" stroke-width="2.5"/>
+          <circle cx="32" cy="18" r="5" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>
+          <circle cx="46" cy="32" r="5" fill="#d1fae5" stroke="#059669" stroke-width="2.5"/>
+          <circle cx="32" cy="46" r="4" fill="#059669"/>
+        </svg>
+        <svg class="brand-wordmark-svg" width="196" height="36" viewBox="0 0 196 36" role="img" aria-label="Cortex-MCP">
+          <text x="98" y="27" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="25" font-weight="700" fill="#161d1a">Cortex-MCP</text>
+        </svg>
+        <span class="sr-only">Cortex-MCP</span>
+      </a>
+      <nav class="site-nav" aria-label="Primary Navigation">
+        <a href="index.html">Home</a>
+        <a href="studio.html">Studio</a>
+        <a href="proof.html" class="active">Benchmarks</a>
+        <a href="rules.html">MCP &amp; Rules</a>
+        <a href="docs.html">Docs</a>
+        <a href="https://github.com/codesphere-u/cortex-mcp">GitHub</a>
+      </nav>
+    </header>
+
+    <main>
+      <p class="hero-kicker">Reproducible Evidence</p>
+      <h1 class="hero-title" style="font-size:2rem;">Observed Benchmark &amp; Demo Metrics</h1>
+      <p style="color:var(--muted);margin-bottom:20px;">All measurements below come directly from running <code>cortex-mcp benchmark</code> and <code>cortex-mcp demo</code> locally on the current release.</p>
+
+      <div class="handy-card">
+        <h2 style="font-family:Georgia,serif;margin:0 0 10px;font-size:1.25rem;"><code>cortex-mcp benchmark</code> (500 Facts &middot; 100 Episodes &middot; 60 Entities)</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Operation</th>
+              <th>Sample Size</th>
+              <th>P50 Latency</th>
+              <th>P95 Latency</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>record_episode</code></td><td>100 episodes</td><td>0.004 ms</td><td>0.008 ms</td></tr>
+            <tr><td><code>upsert_fact</code> (with supersession)</td><td>500 facts</td><td>0.004 ms</td><td>0.006 ms</td></tr>
+            <tr><td><code>traverse_subgraph</code> (2-hop)</td><td>60 entities</td><td>0.158 ms</td><td>0.227 ms</td></tr>
+            <tr><td><code>compile_context</code> (800 tok budget)</td><td>50 queries</td><td>5.750 ms</td><td>7.410 ms</td></tr>
+            <tr><td><code>verify_integrity</code> (600 SHA-256 + Merkle)</td><td>1 full pass</td><td>1.756 ms</td><td>1.756 ms</td></tr>
+          </tbody>
+        </table>
+        <p style="margin:0;font-size:0.88rem;color:var(--muted);">
+          Active Facts: <strong>350</strong> &middot; Superseded Facts: <strong>150</strong> &middot; Stale-Fact Suppression: <strong>100.0%</strong> &middot; Token-Budget Compliance: <strong>100.0%</strong>
+        </p>
+      </div>
+
+      <div class="handy-card soft">
+        <h2 style="font-family:Georgia,serif;margin:0 0 10px;font-size:1.25rem;"><code>cortex-mcp demo</code> Bi-Temporal Supersession Output</h2>
+        <p style="font-size:0.9rem;color:var(--muted);">
+          Across <strong>3 entities</strong>, <strong>6 active facts</strong>, <strong>2 superseded stale facts</strong> (<code>JWT_HS256</code> superseded by <code>PASETO_v4_public</code>; <code>HMAC_SHA256_SHARED_SECRET</code> superseded by <code>Ed25519_Asymmetric_Keypair</code>), and <strong>4 episodes</strong>:
+        </p>
+        <ul>
+          <li>Compiled token usage: <strong>307 / 320 tokens (95.9%)</strong></li>
+          <li>Suppressed stale facts: <strong>2 excluded (0% leak)</strong></li>
+        </ul>
+        <pre><code>cortex-mcp benchmark --json
+cortex-mcp demo --json
+cortex-mcp audit-contradictions --auto-resolve</code></pre>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <span>Cortex-MCP v1.2.0 &middot; MIT License</span>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="studio.html">Studio</a>
+        <a href="docs.html">Docs</a>
+      </div>
+    </footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

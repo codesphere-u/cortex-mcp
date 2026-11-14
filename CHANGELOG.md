@@ -2,6 +2,17 @@
 
 All notable changes to `cortex-mcp` are documented in this file.
 
+## [1.2.0] - 2026-11-14
+
+### Added
+- **Editorial Website & Interactive Bi-Temporal Memory Studio (`website/`)**:
+  - Multi-page Warm Ivory (`#fffdf2`) editorial website with Seafoam Jade (`#059669`) and Warm Ochre (`#d97706`) accent design across `index.html`, `studio.html`, `proof.html`, `rules.html`, and `docs.html`.
+  - Interactive `studio.html` simulator for bi-temporal supersession, `as_of` time-travel snapshots, contradiction polarity/antonym/alias audits, and TruthGate `GroundedSourceDocument` export previews.
+  - Full SEO/GEO suite (`llms.txt`, `llms-full.txt`, `robots.txt`, `sitemap.xml`, `manifest.webmanifest`, Schema.org `@graph` JSON-LD, and `website/marketing/` playbooks).
+- **Documentation & Deployment**:
+  - Added `docs/GETTING_STARTED.md` and `docs/MCP_AND_CONTRADICTIONS.md`, GitHub Pages workflow (`.github/workflows/pages.yml`), and automated website/docs verification tests (`tests/test_website_and_docs.py`).
+  - Added strict type annotations to `scripts/smoke_test.py` and bumped package/server/portal version to `1.2.0`.
+
 ## [1.1.0] - 2026-11-07
 
 ### Added

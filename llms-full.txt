@@ -1,0 +1,7 @@
+# Cortex-MCP v1.2.0 — Complete Technical Reference
+
+Cortex-MCP (`cortex-bitemporal-mcp`) provides local-first bi-temporal memory persistence (`BiTemporalMemoryGraph`), deterministic Okapi BM25 + 2-hop graph compilation (`ContextCompiler`), semantic contradiction detection (`ContradictionAuditor`), SHA-256 Merkle chain verification, and TruthGate citation export (`export_truthgate_sources`) across CLI, `stdio` MCP, HTTP/SSE, and FastAPI Streamable HTTP (`api/index.py`).
+
+## Verified Benchmarks (`cortex-mcp benchmark`)
+- 500 facts (`0.004 ms` P50 upsert), 100 episodes (`0.004 ms` P50 record), 60 entities (`0.158 ms` P50 2-hop traversal), 800-token context compilation (`5.750 ms` P50), 600 SHA-256 Merkle verification (`1.756 ms`).
+- 100.0% stale-fact suppression and 100.0% token-budget compliance.

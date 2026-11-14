@@ -39,7 +39,7 @@ class CortexHTTPHandler(BaseHTTPRequestHandler):
                 {
                     "status": "healthy",
                     "server": "cortex-mcp",
-                    "version": "1.1.0",
+                    "version": "1.2.0",
                     "transport": ["stdio", "http", "sse"],
                     "description": "Bi-temporal working memory & knowledge graph MCP server",
                 }

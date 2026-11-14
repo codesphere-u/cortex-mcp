@@ -1,0 +1,17 @@
+{
+  "name": "Cortex-MCP — Bi-Temporal Knowledge Graph MCP Server",
+  "short_name": "Cortex-MCP",
+  "description": "Local-first bi-temporal knowledge graph, Okapi BM25 token-budgeted context compiler, contradiction auditor, and TruthGate GroundedSourceDocument exporter for AI coding agents.",
+  "start_url": "/cortex-mcp/",
+  "scope": "/cortex-mcp/",
+  "display": "standalone",
+  "background_color": "#fffdf2",
+  "theme_color": "#059669",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

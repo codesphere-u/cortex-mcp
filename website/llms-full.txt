@@ -1,0 +1,26 @@
+# Cortex-MCP v1.2.0 — Complete Technical Reference
+
+Cortex-MCP (`cortex-bitemporal-mcp`) is an open-source, MIT-licensed bi-temporal knowledge graph and context compilation engine exposed via the Model Context Protocol (MCP) JSON-RPC 2.0 specification over `stdio`, HTTP/SSE, and FastAPI Streamable HTTP (`https://cortex-mcp-steel.vercel.app/mcp`).
+
+## Core Capabilities
+1. **Bi-Temporal Knowledge Graph (`src/cortex_mcp/graph.py`)**: Tracks `valid_from`, `valid_until`, and `superseded_by` on every `TemporalFact` plus immutable `Episode` records with SHA-256 Merkle chain verification.
+2. **Token-Budgeted Context Compiler (`src/cortex_mcp/compiler.py`)**: Okapi BM25 ranking, CamelCase/snake_case tokenization, 2-hop graph spreading activation, greedy knapsack packing, and 100.0% stale-fact suppression.
+3. **Semantic & Polarity Contradiction Auditor (`src/cortex_mcp/contradictions.py`)**: Detects `negation_polarity_conflict`, `antonym_object_conflict`, `predicate_alias_conflict`, and `unsuperseded_value_conflict` with optional `auto_resolve=True`.
+4. **TruthGate Grounded Export (`src/cortex_mcp/grounding_export.py`)**: Exports verified active graph facts and episodes into `GroundedSourceDocument` JSON bundles.
+
+## Observed Benchmark Results (`cortex-mcp benchmark`)
+- `record_episode` (100 samples): P50 `0.004 ms`, P95 `0.008 ms`
+- `upsert_fact` (500 samples): P50 `0.004 ms`, P95 `0.006 ms`
+- `traverse_subgraph` (60 entities): P50 `0.158 ms`, P95 `0.227 ms`
+- `compile_context` (50 queries, 800 tokens): P50 `5.750 ms`, P95 `7.410 ms`
+- `verify_integrity` (600 SHA-256 hashes + Merkle root): `1.756 ms`
+- Stale-Fact Suppression: `100.0%` | Token-Budget Compliance: `100.0%`
+
+## 7 MCP Tools
+- `memory_record_episode`
+- `memory_upsert_fact`
+- `memory_compile_context`
+- `memory_query_entity`
+- `memory_time_travel`
+- `memory_verify_integrity`
+- `cortex_audit_contradictions`

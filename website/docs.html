@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documentation — Cortex-MCP</title>
+  <meta name="description" content="Complete Cortex-MCP documentation covering installation, bi-temporal graph model, contradiction auditor, TruthGate export, and MCP/Vercel setup." />
+  <link rel="canonical" href="https://codesphere-u.github.io/cortex-mcp/docs.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Documentation — Cortex-MCP" />
+  <meta property="og:description" content="Guides for Cortex-MCP CLI, Okapi BM25 context compilation, contradiction auditing, and MCP transports." />
+  <meta property="og:image" content="https://codesphere-u.github.io/cortex-mcp/og-image.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="docs-layout">
+    <aside class="docs-sidebar">
+      <a class="docs-brand" href="index.html">
+        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <rect width="64" height="64" rx="16" fill="#064e3b"/>
+          <path d="M18 32c6-12 22-12 28 0" stroke="#34d399" stroke-width="4" stroke-linecap="round"/>
+          <path d="M18 32c6 12 22 12 28 0" stroke="#fbbf24" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="18" cy="32" r="5" fill="#d1fae5"/>
+          <circle cx="46" cy="32" r="5" fill="#fef3c7"/>
+        </svg>
+        <span>Cortex-MCP</span>
+      </a>
+      <nav class="docs-nav" aria-label="Documentation Navigation">
+        <a href="index.html">Home</a>
+        <a href="studio.html">Studio</a>
+        <a href="proof.html">Benchmarks</a>
+        <a href="rules.html">MCP &amp; Rules</a>
+        <a href="docs.html" class="active">Docs</a>
+        <a href="https://github.com/codesphere-u/cortex-mcp">GitHub</a>
+      </nav>
+      <div class="docs-rail-foot">v1.2.0 &middot; MIT License</div>
+    </aside>
+
+    <main class="docs-main">
+      <h1>Cortex-MCP Documentation</h1>
+      <p style="color:var(--muted);">Local-first bi-temporal memory graph, contradiction auditor, and token-budgeted MCP server.</p>
+
+      <nav class="doc-subrail" aria-label="Page Sections">
+        <a href="#install">Install</a>
+        <a href="#bitemporal">Bi-Temporal Model</a>
+        <a href="#compiler">BM25 Compiler</a>
+        <a href="#contradictions">Contradictions</a>
+        <a href="#truthgate">TruthGate Export</a>
+        <a href="#mcp">MCP &amp; CLI</a>
+      </nav>
+
+      <h2 id="install">1. Installation &amp; Quick Start</h2>
+      <p>Install editable with dev/gateway dependencies or run the interactive demo directly:</p>
+      <pre><code>git clone https://github.com/codesphere-u/cortex-mcp.git
+cd cortex-mcp
+pip install -e ".[dev]"
+cortex-mcp demo
+cortex-mcp benchmark</code></pre>
+
+      <h2 id="bitemporal">2. Bi-Temporal Graph Model</h2>
+      <p>Every <code>TemporalFact</code> tracks both valid time (<code>valid_from</code>, <code>valid_until</code>) and supersession pointers (<code>superseded_by</code>). Singular predicates automatically close superseded assertions while preserving full time-travel history via <code>memory_time_travel</code>.</p>
+
+      <h2 id="compiler">3. Okapi BM25 &amp; 2-Hop Context Compiler</h2>
+      <p><code>ContextCompiler</code> tokenizes CamelCase and <code>snake_case</code> identifiers, scores candidate facts and episodes with Okapi BM25, expands 2 hops across entity relations, and packs items strictly within <code>max_tokens</code> with <strong>100% stale-fact suppression</strong>.</p>
+
+      <h2 id="contradictions">4. Contradiction Auditor</h2>
+      <p><code>ContradictionAuditor</code> detects negation polarity conflicts, opposing antonym pairs, predicate alias collisions, and unsuperseded singular drift. Pass <code>auto_resolve=True</code> or run <code>cortex-mcp audit-contradictions --auto-resolve</code> to supersede lower-confidence or older conflicting facts.</p>
+
+      <h2 id="truthgate">5. TruthGate Grounded Export</h2>
+      <p>Export verified active context bundles directly into TruthGate <code>GroundedSourceDocument</code> JSON arrays:</p>
+      <pre><code>cortex-mcp export-sources --query "auth_service signing" --max-tokens 1200 --output sources.json</code></pre>
+
+      <h2 id="mcp">6. MCP Transports &amp; CLI Subcommands</h2>
+      <p>Connect Claude Code or Cursor to the hosted Vercel Streamable HTTP endpoint or run locally over <code>stdio</code> / HTTP SSE:</p>
+      <pre><code>claude mcp add --transport http cortex-mcp https://cortex-mcp-steel.vercel.app/mcp
+cortex-mcp serve-stdio --storage .cortex/memory.json --seed-demo
+cortex-mcp serve-http --host 127.0.0.1 --port 8080</code></pre>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cortex-bitemporal-mcp"
-version = "1.1.0"
+version = "1.2.0"
 description = "Local-First Bi-Temporal Knowledge Graph, Cross-Agent Persistent Memory & Token-Budgeted Context Compiler MCP Server for AI Coding Agents"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -59,6 +59,8 @@ cortex_mcp = ["py.typed"]
 [project.urls]
 Homepage = "https://github.com/codesphere-u/cortex-mcp"
 Repository = "https://github.com/codesphere-u/cortex-mcp"
+Website = "https://codesphere-u.github.io/cortex-mcp/"
+Documentation = "https://codesphere-u.github.io/cortex-mcp/docs.html"
 Issues = "https://github.com/codesphere-u/cortex-mcp/issues"
 Changelog = "https://github.com/codesphere-u/cortex-mcp/blob/main/CHANGELOG.md"
 

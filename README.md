@@ -1,7 +1,10 @@
 # Cortex-MCP (`cortex-mcp`)
 
 [![CI](https://github.com/codesphere-u/cortex-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/codesphere-u/cortex-mcp/actions/workflows/ci.yml)
-[![Release v1.1.0](https://img.shields.io/badge/release-v1.1.0-blue.svg)](https://github.com/codesphere-u/cortex-mcp/releases/tag/v1.1.0)
+[![Release v1.2.0](https://img.shields.io/badge/release-v1.2.0-059669.svg)](https://github.com/codesphere-u/cortex-mcp/releases/tag/v1.2.0)
+[![Website](https://img.shields.io/badge/website-codesphere--u.github.io%2Fcortex--mcp-059669.svg)](https://codesphere-u.github.io/cortex-mcp/)
+
+> **Live Website & Bi-Temporal Studio:** [codesphere-u.github.io/cortex-mcp](https://codesphere-u.github.io/cortex-mcp/) | **Docs:** [Getting Started](docs/GETTING_STARTED.md) &middot; [MCP & Contradictions](docs/MCP_AND_CONTRADICTIONS.md) &middot; [Architecture](docs/architecture.md)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/downloads/)
 [![MCP Spec](https://img.shields.io/badge/MCP-2024--11--05-7c3aed.svg)](https://modelcontextprotocol.io/)
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Operational-10b981?logo=vercel&logoColor=white)](https://cortex-mcp-steel.vercel.app/mcp)

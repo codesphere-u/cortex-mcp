@@ -28,9 +28,9 @@ from cortex_mcp.cli import main as cli_main
 from cortex_mcp.mcp_server import SERVER_VERSION
 
 
-def test_version_is_1_1_0() -> None:
-    assert __version__ == "1.1.0"
-    assert SERVER_VERSION == "1.1.0"
+def test_version_is_1_2_0() -> None:
+    assert __version__ == "1.2.0"
+    assert SERVER_VERSION == "1.2.0"
 
 
 def test_normalize_predicate_aliases_and_negations() -> None:
