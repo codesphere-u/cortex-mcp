@@ -67,7 +67,7 @@ def test_index_json_ld_and_local_links_valid() -> None:
         for href in re.findall(r'href="([^"]+)"', text):
             if href.startswith(("http://", "https://", "#", "mailto:")):
                 continue
-            target = href.split("#")[0]
+            target = href.split("#")[0].split("?")[0]
             if target:
                 assert (WEBSITE / target).exists(), f"Broken local href {href} in {html_path.name}"
 
