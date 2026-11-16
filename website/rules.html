@@ -12,145 +12,424 @@
   <meta property="og:image" content="https://codesphere-u.github.io/cortex-mcp/og-image.svg" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="page-col">
-    <header class="site-header">
-      <a class="brand-mark" href="index.html">
-        <svg class="brand-mascot" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-          <rect width="64" height="64" rx="16" fill="#064e3b"/>
-          <path d="M18 32h28M32 16v32" stroke="#d1fae5" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
-          <path d="M18 32c6-12 22-12 28 0" stroke="#059669" stroke-width="3.5" stroke-linecap="round"/>
-          <path d="M18 32c6 12 22 12 28 0" stroke="#d97706" stroke-width="3.5" stroke-linecap="round"/>
-          <circle cx="18" cy="32" r="5" fill="#d1fae5" stroke="#059669" stroke-width="2.5"/>
-          <circle cx="32" cy="18" r="5" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>
-          <circle cx="46" cy="32" r="5" fill="#d1fae5" stroke="#059669" stroke-width="2.5"/>
-          <circle cx="32" cy="46" r="4" fill="#059669"/>
-        </svg>
-        <svg class="brand-wordmark-svg" width="196" height="36" viewBox="0 0 196 36" role="img" aria-label="Cortex-MCP">
-          <text x="98" y="27" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="25" font-weight="700" fill="#161d1a">Cortex-MCP</text>
-        </svg>
-        <span class="sr-only">Cortex-MCP</span>
-      </a>
-      <nav class="site-nav" aria-label="Primary Navigation">
-        <a href="index.html">Home</a>
-        <a href="studio.html">Studio</a>
-        <a href="proof.html">Benchmarks</a>
-        <a href="rules.html" class="active">MCP &amp; Rules</a>
-        <a href="docs.html">Docs</a>
-        <a href="https://github.com/codesphere-u/cortex-mcp">GitHub</a>
-      </nav>
-    </header>
-
-    <main>
-      <p class="hero-kicker">Protocol &amp; Audit Catalog</p>
-      <h1 class="hero-title" style="font-size:2rem;">7 MCP Tools, 4 Conflict Classes &amp; Resources</h1>
-      <p id="rulesCount" style="color:var(--muted);margin-bottom:14px;"></p>
-
-      <div class="rules-filter">
-        <input id="rulesSearch" class="handy-input" style="flex:1 1 240px;" type="search" placeholder="Search tools, conflict classes, resources..." />
-        <select id="rulesCategory" class="handy-select" style="flex:0 0 190px;">
-          <option value="all">All Categories</option>
-          <option value="tool">MCP Tools (7)</option>
-          <option value="conflict">Contradictions (4)</option>
-          <option value="resource">Resources &amp; Prompts (5)</option>
-        </select>
-      </div>
-
-      <article class="rule-card" data-rule-card data-cat="tool">
-        <span class="rule-id">TOOL &middot; memory_record_episode</span>
-        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Record Immutable Engineering Episode</h2>
-        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Stores an ADR, bug root cause, invariant, migration, incident, or session note linked to files and entity IDs.</p>
-      </article>
-      <article class="rule-card" data-rule-card data-cat="tool">
-        <span class="rule-id">TOOL &middot; memory_upsert_fact</span>
-        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Upsert Bi-Temporal Fact</h2>
-        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Writes <code>(subject_id, predicate, object)</code> with automatic supersession when <code>singular=True</code>.</p>
-      </article>
-      <article class="rule-card" data-rule-card data-cat="tool">
-        <span class="rule-id">TOOL &middot; memory_compile_context</span>
-        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Compile Token-Budgeted Context</h2>
-        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Ranks active facts and episodes using Okapi BM25 + 2-hop spreading activation within <code>max_tokens</code>.</p>
-      </article>
-      <article class="rule-card" data-rule-card data-cat="tool">
-        <span class="rule-id">TOOL &middot; memory_query_entity</span>
-        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Inspect Entity Ego-Graph</h2>
-        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Retrieves active and optional historical edges around any service, file, or component ID.</p>
-      </article>
-      <article class="rule-card" data-rule-card data-cat="tool">
-        <span class="rule-id">TOOL &middot; memory_time_travel</span>
-        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Point-in-Time Snapshot (<code>as_of</code>)</h2>
-        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Reconstructs the exact valid knowledge graph at any past ISO-8601 UTC timestamp.</p>
-      </article>
-      <article class="rule-card" data-rule-card data-cat="tool">
-        <span class="rule-id">TOOL &middot; memory_verify_integrity</span>
-        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Verify SHA-256 Merkle Chain</h2>
-        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Recomputes cryptographic hashes across every stored fact and episode to verify tamper-free persistence.</p>
-      </article>
-      <article class="rule-card" data-rule-card data-cat="tool">
-        <span class="rule-id">TOOL &middot; cortex_audit_contradictions</span>
-        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Audit &amp; Auto-Resolve Conflicts</h2>
-        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Scans active facts for polarity, antonym, alias, or singular drift conflicts and optionally supersedes older claims.</p>
-      </article>
-
-      <article class="rule-card" data-rule-card data-cat="conflict">
-        <span class="rule-id">CRITICAL &middot; negation_polarity_conflict</span>
-        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Negation Polarity Conflict</h2>
-        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Flags pairs like <code>does_not_use_session_cookie</code> vs <code>uses_session_cookie</code> on the same subject.</p>
-      </article>
-      <article class="rule-card" data-rule-card data-cat="conflict">
-        <span class="rule-id">CRITICAL &middot; antonym_object_conflict</span>
-        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Opposing Antonym Object Conflict</h2>
-        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Detects opposing state pairs such as <code>stateful</code> vs <code>stateless</code>, <code>encrypted</code> vs <code>plaintext</code>, or <code>enabled</code> vs <code>disabled</code>.</p>
-      </article>
-      <article class="rule-card" data-rule-card data-cat="conflict">
-        <span class="rule-id">HIGH &middot; predicate_alias_conflict</span>
-        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Canonical Predicate Alias Collision</h2>
-        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Normalizes surface variants (e.g., <code>requires_isolation</code> vs <code>isolation_level</code>) that assert conflicting objects.</p>
-      </article>
-      <article class="rule-card" data-rule-card data-cat="conflict">
-        <span class="rule-id">HIGH &middot; unsuperseded_value_conflict</span>
-        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Unsuperseded Singular Value Drift</h2>
-        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Catches concurrent active facts with divergent values written with <code>singular=False</code>.</p>
-      </article>
-
-      <article class="rule-card" data-rule-card data-cat="resource">
-        <span class="rule-id">RESOURCE &middot; cortex://graph/stats</span>
-        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Graph Counts &amp; Schema Summary</h2>
-        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Live entity, episode, active fact, and superseded fact counts.</p>
-      </article>
-      <article class="rule-card" data-rule-card data-cat="resource">
-        <span class="rule-id">RESOURCE &middot; cortex://graph/integrity</span>
-        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Cryptographic Integrity Report</h2>
-        <p style="margin:0;font-size:0.9rem;color:var(--muted);">JSON SHA-256 verification status and Merkle root digest.</p>
-      </article>
-      <article class="rule-card" data-rule-card data-cat="resource">
-        <span class="rule-id">RESOURCE &middot; cortex://episodes/recent</span>
-        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Recent Engineering Episodes</h2>
-        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Latest ADRs, invariants, and root-cause records persisted to the graph.</p>
-      </article>
-      <article class="rule-card" data-rule-card data-cat="resource">
-        <span class="rule-id">PROMPT &middot; architecture-briefing</span>
-        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Component Architecture Briefing</h2>
-        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Compiles a token-budgeted briefing for a target service or module ID.</p>
-      </article>
-      <article class="rule-card" data-rule-card data-cat="resource">
-        <span class="rule-id">PROMPT &middot; bug-investigation-context</span>
-        <h2 style="font-size:1.05rem;margin:8px 0 4px;">Bug Investigation Context</h2>
-        <p style="margin:0;font-size:0.9rem;color:var(--muted);">Retrieves invariants, historical root causes, and dependencies for a symptom.</p>
-      </article>
-    </main>
-
-    <footer class="site-footer">
-      <span>Cortex-MCP v1.2.0 &middot; MIT License</span>
-      <div class="footer-links">
-        <a href="index.html">Home</a>
-        <a href="studio.html">Studio</a>
-        <a href="docs.html">Docs</a>
-      </div>
-    </footer>
+  <div class="announcement-bar">
+    <span class="pill-tag indigo">Protocol Spec</span>
+    <span>7 JSON-RPC 2.0 Tools &middot; 4 Contradiction Detectors &middot; 3 Graph Resources &middot; 2 Prompt Templates</span>
+    <a href="docs.html#client-setup">Configure Client &rarr;</a>
   </div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand-link" href="index.html">
+        <img class="brand-icon" src="favicon.svg" alt="" width="30" height="30" />
+        <span>Cortex-MCP</span>
+        <span class="version-chip">v1.2.0</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Primary Navigation">
+        <a href="index.html">Overview</a>
+        <a href="studio.html">Memory Studio</a>
+        <a href="rules.html" class="active">Tools &amp; Rules</a>
+        <a href="proof.html">Benchmarks</a>
+        <a href="docs.html">Docs</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button type="button" class="search-trigger" data-open-search aria-label="Search documentation">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>Search...</span>
+          <kbd>&#8984;K</kbd>
+        </button>
+        <button id="themeToggleBtn" type="button" class="icon-btn" aria-label="Toggle color theme"></button>
+        <a class="icon-btn" href="https://github.com/codesphere-u/cortex-mcp" aria-label="GitHub repository">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        </a>
+        <a class="btn btn-primary btn-sm" href="docs.html#client-setup">Connect MCP</a>
+        <button id="mobileMenuBtn" type="button" class="icon-btn mobile-menu-btn" aria-label="Open menu" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+    <nav id="mobileDrawer" class="mobile-drawer" aria-label="Mobile Navigation">
+      <a href="index.html">Overview</a>
+      <a href="studio.html">Memory Studio</a>
+      <a href="rules.html" class="active">Tools &amp; Rules</a>
+      <a href="proof.html">Benchmarks</a>
+      <a href="docs.html">Documentation</a>
+      <a href="docs.html#client-setup">Connect MCP Client</a>
+      <a href="https://github.com/codesphere-u/cortex-mcp">GitHub Repository</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="page-hero">
+      <span class="pill-tag">Protocol &amp; Audit Catalog</span>
+      <h1>MCP Tools, Resources, Prompts &amp; Contradiction Rules</h1>
+      <p id="rulesCount">Showing 16 of 16 protocol specifications</p>
+    </section>
+
+    <div class="rules-filter-bar">
+      <div class="preset-bar" style="margin:0;">
+        <button type="button" class="preset-chip active" data-rule-cat="all">All (16)</button>
+        <button type="button" class="preset-chip" data-rule-cat="tool">MCP Tools (7)</button>
+        <button type="button" class="preset-chip" data-rule-cat="conflict">Contradictions (4)</button>
+        <button type="button" class="preset-chip" data-rule-cat="resource">Resources &amp; Prompts (5)</button>
+      </div>
+      <input id="rulesSearch" class="ui-input" style="max-width:340px;" type="search" placeholder="Filter by tool name, parameter, URI, or rule..." />
+    </div>
+
+    <!-- 7 MCP Tools -->
+    <article id="tool-memory_record_episode" class="rule-card" data-rule-card data-cat="tool">
+      <div class="finding-head">
+        <span class="pill-tag">TOOL &middot; memory_record_episode</span>
+        <span class="mono" style="font-size:0.75rem;color:var(--muted);">Immutable SHA-256 Episode</span>
+      </div>
+      <h2 style="font-size:1.1rem;margin:10px 0 6px;">Record Immutable Engineering Episode</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">Stores an ADR, bug root cause, invariant, session note, migration, or incident linked to touched files and mentioned entity IDs.</p>
+      <div class="param-pills">
+        <span class="param-pill req">title* (string)</span>
+        <span class="param-pill req">category* (enum)</span>
+        <span class="param-pill req">content* (string)</span>
+        <span class="param-pill">files_touched (string[])</span>
+        <span class="param-pill">entities_mentioned (string[])</span>
+        <span class="param-pill">timestamp (iso8601)</span>
+      </div>
+      <details>
+        <summary>Inspect JSON-RPC 2.0 Request Example</summary>
+        <div class="code-card" style="margin-top:10px;margin-bottom:0;">
+          <div class="code-header">
+            <span class="code-lang"><span class="code-dots"><i></i><i></i><i></i></span>json</span>
+            <button type="button" class="copy-btn" data-copy-target="exEp">Copy</button>
+          </div>
+          <pre><code id="exEp">{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "memory_record_episode",
+    "arguments": {
+      "title": "ADR-019: Migrate auth_service to PASETO_v4_public",
+      "category": "adr",
+      "content": "Replaced symmetric JWT_HS256 with Ed25519 asymmetric PASETO_v4_public.",
+      "files_touched": ["src/auth/tokens.py"],
+      "entities_mentioned": ["auth_service"]
+    }
+  }
+}</code></pre>
+        </div>
+      </details>
+    </article>
+
+    <article id="tool-memory_upsert_fact" class="rule-card" data-rule-card data-cat="tool">
+      <div class="finding-head">
+        <span class="pill-tag">TOOL &middot; memory_upsert_fact</span>
+        <span class="mono" style="font-size:0.75rem;color:var(--muted);">Auto-Supersession</span>
+      </div>
+      <h2 style="font-size:1.1rem;margin:10px 0 6px;">Upsert Bi-Temporal Fact</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">Records a directed <code>(subject_id, predicate, object)</code> triple with automatic conflict detection and closure of prior active facts when <code>singular=True</code>.</p>
+      <div class="param-pills">
+        <span class="param-pill req">subject_id* (string)</span>
+        <span class="param-pill req">predicate* (string)</span>
+        <span class="param-pill">object_id (string)</span>
+        <span class="param-pill">object_value (string)</span>
+        <span class="param-pill">singular (bool=true)</span>
+        <span class="param-pill">confidence (number=1.0)</span>
+        <span class="param-pill">source_episode_id (string)</span>
+        <span class="param-pill">valid_from (iso8601)</span>
+      </div>
+      <details>
+        <summary>Inspect JSON-RPC 2.0 Request Example</summary>
+        <div class="code-card" style="margin-top:10px;margin-bottom:0;">
+          <div class="code-header">
+            <span class="code-lang"><span class="code-dots"><i></i><i></i><i></i></span>json</span>
+            <button type="button" class="copy-btn" data-copy-target="exUpsert">Copy</button>
+          </div>
+          <pre><code id="exUpsert">{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/call",
+  "params": {
+    "name": "memory_upsert_fact",
+    "arguments": {
+      "subject_id": "auth_service",
+      "predicate": "signing_primitive",
+      "object_value": "Ed25519_Asymmetric_Keypair",
+      "singular": true
+    }
+  }
+}</code></pre>
+        </div>
+      </details>
+    </article>
+
+    <article id="tool-memory_compile_context" class="rule-card" data-rule-card data-cat="tool">
+      <div class="finding-head">
+        <span class="pill-tag">TOOL &middot; memory_compile_context</span>
+        <span class="mono" style="font-size:0.75rem;color:var(--muted);">BM25 + 2-Hop Packing</span>
+      </div>
+      <h2 style="font-size:1.1rem;margin:10px 0 6px;">Compile Token-Budgeted Context</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">Scores active facts and episodes via Okapi BM25 + 2-hop graph spreading activation and greedily packs items within strict <code>max_tokens</code>.</p>
+      <div class="param-pills">
+        <span class="param-pill req">query* (string)</span>
+        <span class="param-pill">max_tokens (int=1200)</span>
+        <span class="param-pill">include_superseded (bool=false)</span>
+        <span class="param-pill">as_of (iso8601)</span>
+      </div>
+      <details>
+        <summary>Inspect JSON-RPC 2.0 Request Example</summary>
+        <div class="code-card" style="margin-top:10px;margin-bottom:0;">
+          <div class="code-header">
+            <span class="code-lang"><span class="code-dots"><i></i><i></i><i></i></span>json</span>
+            <button type="button" class="copy-btn" data-copy-target="exCompile">Copy</button>
+          </div>
+          <pre><code id="exCompile">{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "tools/call",
+  "params": {
+    "name": "memory_compile_context",
+    "arguments": {
+      "query": "auth_service token signing and payment_ledger isolation",
+      "max_tokens": 800
+    }
+  }
+}</code></pre>
+        </div>
+      </details>
+    </article>
+
+    <article id="tool-memory_query_entity" class="rule-card" data-rule-card data-cat="tool">
+      <div class="finding-head">
+        <span class="pill-tag">TOOL &middot; memory_query_entity</span>
+        <span class="mono" style="font-size:0.75rem;color:var(--muted);">Ego-Graph Traversal</span>
+      </div>
+      <h2 style="font-size:1.1rem;margin:10px 0 6px;">Inspect Entity Ego-Graph</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">Returns an entity's active facts, superseded historical facts, related engineering episodes, and K-hop graph neighborhood.</p>
+      <div class="param-pills">
+        <span class="param-pill req">entity_id* (string)</span>
+        <span class="param-pill">include_superseded (bool=true)</span>
+        <span class="param-pill">max_hops (int=2)</span>
+      </div>
+    </article>
+
+    <article id="tool-memory_time_travel" class="rule-card" data-rule-card data-cat="tool">
+      <div class="finding-head">
+        <span class="pill-tag">TOOL &middot; memory_time_travel</span>
+        <span class="mono" style="font-size:0.75rem;color:var(--muted);">Point-in-Time Query</span>
+      </div>
+      <h2 style="font-size:1.1rem;margin:10px 0 6px;">Point-in-Time Snapshot (<code>as_of</code>)</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">Reconstructs the exact active knowledge graph state valid at any past ISO-8601 UTC timestamp.</p>
+      <div class="param-pills">
+        <span class="param-pill req">as_of* (iso8601 UTC string)</span>
+      </div>
+    </article>
+
+    <article id="tool-memory_verify_integrity" class="rule-card" data-rule-card data-cat="tool">
+      <div class="finding-head">
+        <span class="pill-tag">TOOL &middot; memory_verify_integrity</span>
+        <span class="mono" style="font-size:0.75rem;color:var(--muted);">Cryptographic Audit</span>
+      </div>
+      <h2 style="font-size:1.1rem;margin:10px 0 6px;">Verify SHA-256 Merkle Chain</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">Recomputes canonical SHA-256 hashes across every stored temporal fact and engineering episode and returns the graph Merkle digest.</p>
+      <div class="param-pills">
+        <span class="param-pill">No required arguments</span>
+      </div>
+    </article>
+
+    <article id="tool-cortex_audit_contradictions" class="rule-card" data-rule-card data-cat="tool">
+      <div class="finding-head">
+        <span class="pill-tag">TOOL &middot; cortex_audit_contradictions</span>
+        <span class="mono" style="font-size:0.75rem;color:var(--muted);">Semantic Conflict Auditor</span>
+      </div>
+      <h2 style="font-size:1.1rem;margin:10px 0 6px;">Audit &amp; Auto-Resolve Conflicts</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">Scans active facts for polarity inversions, antonym objects, predicate alias collisions, or unsuperseded drift and optionally auto-supersedes losers.</p>
+      <div class="param-pills">
+        <span class="param-pill">as_of (optional iso8601)</span>
+        <span class="param-pill">auto_resolve (bool=false)</span>
+      </div>
+      <details>
+        <summary>Inspect JSON-RPC 2.0 Request Example</summary>
+        <div class="code-card" style="margin-top:10px;margin-bottom:0;">
+          <div class="code-header">
+            <span class="code-lang"><span class="code-dots"><i></i><i></i><i></i></span>json</span>
+            <button type="button" class="copy-btn" data-copy-target="exAudit">Copy</button>
+          </div>
+          <pre><code id="exAudit">{
+  "jsonrpc": "2.0",
+  "id": 7,
+  "method": "tools/call",
+  "params": {
+    "name": "cortex_audit_contradictions",
+    "arguments": { "auto_resolve": true }
+  }
+}</code></pre>
+        </div>
+      </details>
+    </article>
+
+    <!-- 4 Contradiction Audit Classes -->
+    <article id="conflict-polarity" class="rule-card" data-rule-card data-cat="conflict">
+      <div class="finding-head">
+        <span class="pill-tag danger">CRITICAL &middot; negation_polarity_conflict</span>
+      </div>
+      <h2 style="font-size:1.08rem;margin:10px 0 4px;">Negation Polarity Conflict</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">Flags opposing polarity claims on the same subject and canonical predicate, such as <code>does_not_use_session_cookie</code> vs <code>uses_session_cookie</code>.</p>
+    </article>
+
+    <article id="conflict-antonym" class="rule-card" data-rule-card data-cat="conflict">
+      <div class="finding-head">
+        <span class="pill-tag danger">CRITICAL &middot; antonym_object_conflict</span>
+      </div>
+      <h2 style="font-size:1.08rem;margin:10px 0 4px;">Opposing Antonym Object Conflict</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">Detects contradictory technical state pairs including <code>stateful</code> vs <code>stateless</code>, <code>encrypted</code> vs <code>plaintext</code>, <code>mutable</code> vs <code>immutable</code>, and <code>enabled</code> vs <code>disabled</code>.</p>
+    </article>
+
+    <article id="conflict-alias" class="rule-card" data-rule-card data-cat="conflict">
+      <div class="finding-head">
+        <span class="pill-tag amber">HIGH &middot; predicate_alias_conflict</span>
+      </div>
+      <h2 style="font-size:1.08rem;margin:10px 0 4px;">Canonical Predicate Alias Collision</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">Normalizes surface variants (e.g., <code>requires_isolation</code> vs <code>isolation_level</code>, or <code>db_engine</code> vs <code>database_engine</code>) that assert conflicting objects.</p>
+    </article>
+
+    <article id="conflict-drift" class="rule-card" data-rule-card data-cat="conflict">
+      <div class="finding-head">
+        <span class="pill-tag amber">HIGH &middot; unsuperseded_value_conflict</span>
+      </div>
+      <h2 style="font-size:1.08rem;margin:10px 0 4px;">Unsuperseded Singular Value Drift</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">Catches concurrent active facts written across parallel sessions with <code>singular=False</code> that hold conflicting object values.</p>
+    </article>
+
+    <!-- 3 Resources & 2 Prompts (Verified directly against src/cortex_mcp/server.py) -->
+    <article id="res-summary" class="rule-card" data-rule-card data-cat="resource">
+      <div class="finding-head">
+        <span class="pill-tag cyan">RESOURCE &middot; cortex://graph/summary</span>
+        <span class="mono" style="font-size:0.75rem;color:var(--muted);">application/json</span>
+      </div>
+      <h2 style="font-size:1.08rem;margin:10px 0 4px;">Bi-Temporal Knowledge Graph Summary</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">Live counts of tracked entities, active vs superseded facts, recorded episodes, and the graph SHA-256 Merkle digest.</p>
+    </article>
+
+    <article id="res-integrity" class="rule-card" data-rule-card data-cat="resource">
+      <div class="finding-head">
+        <span class="pill-tag cyan">RESOURCE &middot; cortex://graph/integrity</span>
+        <span class="mono" style="font-size:0.75rem;color:var(--muted);">application/json</span>
+      </div>
+      <h2 style="font-size:1.08rem;margin:10px 0 4px;">Cryptographic Integrity Report</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">Full JSON SHA-256 verification status across all facts and episodes plus Merkle root digest.</p>
+    </article>
+
+    <article id="res-episodes" class="rule-card" data-rule-card data-cat="resource">
+      <div class="finding-head">
+        <span class="pill-tag cyan">RESOURCE &middot; cortex://episodes/recent</span>
+        <span class="mono" style="font-size:0.75rem;color:var(--muted);">application/json</span>
+      </div>
+      <h2 style="font-size:1.08rem;margin:10px 0 4px;">Recent Engineering Episodes</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">Array of the 20 most recent ADRs, invariants, and bug root causes persisted in the graph.</p>
+    </article>
+
+    <article id="prompt-arch" class="rule-card" data-rule-card data-cat="resource">
+      <div class="finding-head">
+        <span class="pill-tag indigo">PROMPT &middot; architecture-briefing</span>
+      </div>
+      <h2 style="font-size:1.08rem;margin:10px 0 4px;">Component Architecture Briefing</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">Compiles a token-budgeted architectural briefing before proposing code changes to a target component.</p>
+      <div class="param-pills">
+        <span class="param-pill req">component* (string)</span>
+        <span class="param-pill">max_tokens (int=1000)</span>
+      </div>
+    </article>
+
+    <article id="prompt-bug" class="rule-card" data-rule-card data-cat="resource">
+      <div class="finding-head">
+        <span class="pill-tag indigo">PROMPT &middot; bug-investigation-context</span>
+      </div>
+      <h2 style="font-size:1.08rem;margin:10px 0 4px;">Bug Investigation Context</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">Assembles active system invariants, past root causes, and dependencies for a bug symptom or file path.</p>
+      <div class="param-pills">
+        <span class="param-pill req">symptom* (string)</span>
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a class="brand-link" href="index.html" style="margin-bottom:10px;">
+            <img class="brand-icon" src="favicon.svg" alt="" width="28" height="28" />
+            <span>Cortex-MCP</span>
+          </a>
+          <p style="font-size:0.84rem;color:var(--muted);margin:0;max-width:290px;">
+            Local-first bi-temporal knowledge graph, contradiction auditor, and token-budgeted context compiler for AI coding agents.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="index.html">Overview</a></li>
+            <li><a href="studio.html">Memory Studio</a></li>
+            <li><a href="rules.html">Tools &amp; Rules</a></li>
+            <li><a href="proof.html">Benchmarks</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Documentation</h4>
+          <ul>
+            <li><a href="docs.html#install">Quickstart</a></li>
+            <li><a href="docs.html#client-setup">MCP Client Setup</a></li>
+            <li><a href="docs.html#transports">Transports Guide</a></li>
+            <li><a href="docs.html#cli">CLI Reference</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Deployments</h4>
+          <ul>
+            <li><a href="https://cortex-mcp-steel.vercel.app">Vercel Developer Portal</a></li>
+            <li><a href="https://cortex-mcp-steel.vercel.app/health">Gateway Health Probe</a></li>
+            <li><a href="https://github.com/codesphere-u/cortex-mcp">GitHub Repository</a></li>
+            <li><a href="https://github.com/codesphere-u/cortex-mcp/releases/tag/v1.2.0">Release v1.2.0</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>For Agents</h4>
+          <ul>
+            <li><a href="llms.txt">llms.txt</a></li>
+            <li><a href="llms-full.txt">llms-full.txt</a></li>
+            <li><a href="sitemap.xml">sitemap.xml</a></li>
+            <li><a href="robots.txt">robots.txt</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>Cortex-MCP v1.2.0 &middot; MIT License &middot; Akandwanaho Ivan Alvin &middot; Codesphere Innovations (U) Limited</span>
+        <div class="footer-agent-links">
+          <span>MCP 2024-11-05</span>
+          <span>&middot;</span>
+          <a href="llms.txt">Agent Index</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="cmdBackdrop" class="cmd-backdrop" role="dialog" aria-modal="true" aria-label="Search Cortex-MCP documentation">
+    <div class="cmd-dialog">
+      <div class="cmd-input-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="cmdSearchInput" type="search" placeholder="Search tools, MCP client setup, CLI commands, rules..." autocomplete="off" />
+        <kbd style="font-size:0.72rem;padding:2px 6px;border-radius:5px;border:1px solid var(--line);color:var(--muted);">ESC</kbd>
+      </div>
+      <div id="cmdResults" class="cmd-results"></div>
+    </div>
+  </div>
+
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script src="app.js"></script>
 </body>

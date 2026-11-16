@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cortex-MCP — Bi-Temporal Knowledge Graph &amp; Token-Budgeted Context Compiler</title>
+  <title>Cortex-MCP — Bi-Temporal Knowledge Graph &amp; Context Compiler for AI Agents</title>
   <meta name="description" content="Local-first bi-temporal knowledge graph, Okapi BM25 token-budgeted context compiler, contradiction auditor, and TruthGate exporter for AI agents." />
   <link rel="canonical" href="https://codesphere-u.github.io/cortex-mcp/" />
   <meta property="og:type" content="website" />
@@ -17,6 +17,9 @@
   <meta name="twitter:image" content="https://codesphere-u.github.io/cortex-mcp/og-image.svg" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script type="application/ld+json">
   {
@@ -83,158 +86,493 @@
   </script>
 </head>
 <body>
-  <div class="page-col">
-    <header class="site-header">
-      <a class="brand-mark" href="index.html">
-        <svg class="brand-mascot" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-          <rect width="64" height="64" rx="16" fill="#064e3b"/>
-          <path d="M18 32h28M32 16v32" stroke="#d1fae5" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
-          <path d="M18 32c6-12 22-12 28 0" stroke="#059669" stroke-width="3.5" stroke-linecap="round"/>
-          <path d="M18 32c6 12 22 12 28 0" stroke="#d97706" stroke-width="3.5" stroke-linecap="round"/>
-          <circle cx="18" cy="32" r="5" fill="#d1fae5" stroke="#059669" stroke-width="2.5"/>
-          <circle cx="32" cy="18" r="5" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>
-          <circle cx="46" cy="32" r="5" fill="#d1fae5" stroke="#059669" stroke-width="2.5"/>
-          <circle cx="32" cy="46" r="4" fill="#059669"/>
-        </svg>
-        <svg class="brand-wordmark-svg" width="196" height="36" viewBox="0 0 196 36" role="img" aria-label="Cortex-MCP">
-          <text x="98" y="27" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="25" font-weight="700" fill="#161d1a">Cortex-MCP</text>
-        </svg>
-        <span class="sr-only">Cortex-MCP</span>
+  <div class="announcement-bar">
+    <span class="pill-tag">v1.2.0</span>
+    <span>Cortex-MCP Streamable HTTP Gateway is live on Vercel — 7 tools, 3 resources, 2 prompts, 108/108 tests passing.</span>
+    <a href="docs.html#client-setup">Connect in 15s &rarr;</a>
+  </div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand-link" href="index.html">
+        <img class="brand-icon" src="favicon.svg" alt="" width="30" height="30" />
+        <span>Cortex-MCP</span>
+        <span class="version-chip">v1.2.0</span>
       </a>
 
-      <nav class="site-nav" aria-label="Primary Navigation">
-        <a href="index.html" class="active">Home</a>
-        <a href="studio.html">Studio</a>
+      <nav class="nav-links" aria-label="Primary Navigation">
+        <a href="index.html" class="active">Overview</a>
+        <a href="studio.html">Memory Studio</a>
+        <a href="rules.html">Tools &amp; Rules</a>
         <a href="proof.html">Benchmarks</a>
-        <a href="rules.html">MCP &amp; Rules</a>
         <a href="docs.html">Docs</a>
-        <a href="https://github.com/codesphere-u/cortex-mcp">GitHub</a>
       </nav>
-    </header>
 
-    <main>
-      <section style="text-align:center;">
-        <p class="hero-kicker">v1.2.0 &middot; Bi-Temporal Agent Memory</p>
-        <h1 class="hero-title">Persistent cross-session memory that expires stale facts automatically.</h1>
-        <p class="hero-lead">
-          Cortex-MCP combines a local-first bi-temporal knowledge graph, Okapi BM25 + 2-hop spreading activation context compiler, semantic contradiction auditor, and TruthGate exporter over MCP.
+      <div class="nav-actions">
+        <button type="button" class="search-trigger" data-open-search aria-label="Search documentation">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>Search...</span>
+          <kbd>&#8984;K</kbd>
+        </button>
+        <button id="themeToggleBtn" type="button" class="icon-btn" aria-label="Toggle color theme"></button>
+        <a class="icon-btn" href="https://github.com/codesphere-u/cortex-mcp" aria-label="GitHub repository" title="GitHub repository">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        </a>
+        <a class="btn btn-primary btn-sm" href="docs.html#client-setup">Connect MCP</a>
+        <button id="mobileMenuBtn" type="button" class="icon-btn mobile-menu-btn" aria-label="Open menu" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+    <nav id="mobileDrawer" class="mobile-drawer" aria-label="Mobile Navigation">
+      <a href="index.html" class="active">Overview</a>
+      <a href="studio.html">Memory Studio</a>
+      <a href="rules.html">Tools &amp; Rules</a>
+      <a href="proof.html">Benchmarks</a>
+      <a href="docs.html">Documentation</a>
+      <a href="docs.html#client-setup">Connect MCP Client</a>
+      <a href="https://github.com/codesphere-u/cortex-mcp">GitHub Repository</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-grid-bg" aria-hidden="true"></div>
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="container hero-inner">
+        <div class="hero-eyebrow">
+          <span class="status-dot"></span>
+          <span>Bi-Temporal Memory Engine &middot; MCP 2024-11-05</span>
+        </div>
+
+        <h1 class="hero-h1">
+          Persistent memory for coding agents.<br />
+          <span class="hero-gradient">Stale facts expire automatically.</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          Cortex-MCP pairs a local-first bi-temporal knowledge graph with an Okapi BM25 + 2-hop graph context compiler, semantic contradiction auditor, and TruthGate citation exporter.
         </p>
 
-        <div class="hero-actions">
-          <div class="cta-wrap">
-            <button type="button" class="btn-primary" data-popover-toggle="installPopover">Install Cortex-MCP</button>
-            <div id="installPopover" class="cta-popover" role="dialog" aria-label="Install commands">
-              <p class="cta-popover-title">Quick Install &amp; Connect</p>
-              <div class="cmd-row">
-                <code>pip install -e .</code>
-                <button type="button" class="copy-mini" data-copy="pip install -e .">Copy</button>
+        <div class="trust-line">
+          <span>&bull; runs locally</span>
+          <span>&bull; zero external API keys</span>
+          <span>&bull; SHA-256 Merkle verified</span>
+          <span>&bull; MIT open source</span>
+        </div>
+
+        <div class="hero-cta-row">
+          <a class="btn btn-primary" href="studio.html">Open Memory Studio &rarr;</a>
+          <a class="btn btn-secondary" href="docs.html#client-setup">Client Setup Guides</a>
+          <a class="btn btn-secondary" href="https://cortex-mcp-steel.vercel.app">Live Vercel Portal &nearr;</a>
+        </div>
+
+        <!-- Plannotator + Stitch Style Instant Client Switcher -->
+        <div class="quick-connect-shell" data-client-switcher>
+          <div class="client-tabs" role="tablist" aria-label="MCP Client Selector">
+            <button type="button" class="client-pill active" data-client="claude-code" role="tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              Claude Code
+            </button>
+            <button type="button" class="client-pill" data-client="cursor" role="tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              Cursor
+            </button>
+            <button type="button" class="client-pill" data-client="windsurf" role="tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              Windsurf
+            </button>
+            <button type="button" class="client-pill" data-client="claude-desktop" role="tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="18" x2="12" y2="21"/></svg>
+              Claude Desktop
+            </button>
+            <button type="button" class="client-pill" data-client="antigravity" role="tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 19 21 12 17 5 21 12 2"/></svg>
+              Antigravity / VS Code
+            </button>
+            <button type="button" class="client-pill" data-client="uvx-stdio" role="tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="3"/><path d="m8 9 3 3-3 3"/><path d="M13 15h3"/></svg>
+              Local uvx
+            </button>
+          </div>
+          <div class="client-panel-meta">
+            <span>Target: <code class="client-path" data-client-path>Project or User Scope</code></span>
+            <span class="pill-tag cyan" data-client-transport>Streamable HTTP</span>
+          </div>
+          <div class="code-card">
+            <div class="code-header">
+              <span class="code-lang">
+                <span class="code-dots"><i></i><i></i><i></i></span>
+                <span data-client-lang>bash</span>
+              </span>
+              <button type="button" class="copy-btn" data-client-copy data-copy="">Copy</button>
+            </div>
+            <pre><code data-client-code></code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Univer-Inspired Interactive Bi-Temporal Canvas Workbench -->
+    <section class="workbench-section">
+      <div class="container">
+        <div id="heroWorkbench" class="workbench-frame">
+          <div class="workbench-toolbar">
+            <div class="workbench-meta">
+              <span class="fx-pill"><strong>fx</strong> <span id="heroFxExpr">memory_compile_context(...)</span></span>
+              <span class="pill-tag" id="heroMerkle">sha256:e893bf67...</span>
+            </div>
+            <div class="timeline-pills" role="group" aria-label="Time-travel timestamp selector">
+              <button type="button" class="time-pill" data-hero-time="t1">T1 &middot; 2026-01-10 (JWT)</button>
+              <button type="button" class="time-pill" data-hero-time="t3">T3 &middot; 2026-03-01 (+Ledger)</button>
+              <button type="button" class="time-pill active" data-hero-time="t4">T4 &middot; 2026-04-20 (PASETO Head)</button>
+            </div>
+          </div>
+
+          <div class="workbench-body">
+            <div class="graph-stage">
+              <div class="agent-cursors">
+                <span class="cursor-chip claude">&bull; Claude Code reading active subgraph</span>
+                <span class="cursor-chip cursor-agent">&bull; Cursor upserting ADR-019</span>
               </div>
-              <div class="cmd-row">
-                <code>cortex-mcp demo</code>
-                <button type="button" class="copy-mini" data-copy="cortex-mcp demo">Copy</button>
+              <svg id="heroGraphSvg" class="hero-graph-svg" viewBox="0 0 680 290" role="img" aria-label="Interactive bi-temporal knowledge graph visualization"></svg>
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-family:var(--font-mono);font-size:0.74rem;color:var(--muted);">
+                <span>Click any timestamp above to inspect bi-temporal supersession</span>
+                <span>0% stale-fact leakage</span>
               </div>
-              <div class="cmd-row">
-                <code>claude mcp add --transport http cortex-mcp https://cortex-mcp-steel.vercel.app/mcp</code>
-                <button type="button" class="copy-mini" data-copy="claude mcp add --transport http cortex-mcp https://cortex-mcp-steel.vercel.app/mcp">Copy</button>
+            </div>
+
+            <div class="compiler-stage">
+              <div class="budget-meter">
+                <div class="budget-head">
+                  <span>Compiled Context Budget</span>
+                  <span class="mono" id="heroBudgetText">307 / 320 tokens (95.9%)</span>
+                </div>
+                <div class="budget-track">
+                  <div id="heroBudgetFill" class="budget-fill" style="width:96%"></div>
+                </div>
+              </div>
+
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+                <span style="font-size:0.82rem;font-weight:700;">Okapi BM25 + 2-Hop Packed Items</span>
+                <span id="heroSuppressedBadge" class="pill-tag">2 Stale Facts Suppressed (0% leak)</span>
+              </div>
+
+              <div id="heroCompiledList" class="compiled-list"></div>
+
+              <div style="margin-top:auto;display:flex;gap:10px;flex-wrap:wrap;">
+                <a class="btn btn-primary btn-sm" href="studio.html">Edit Graph in Studio &rarr;</a>
+                <a class="btn btn-secondary btn-sm" href="rules.html">Inspect 7 MCP Tools</a>
               </div>
             </div>
           </div>
-          <a class="btn-secondary" href="studio.html">Open Memory Studio</a>
-          <a class="btn-secondary" href="docs.html">Read Docs</a>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="flow-section">
-        <p class="section-label">How It Works</p>
-        <h2 class="section-heading">Three stages from session amnesia to verified prompts</h2>
-        <div class="flow-grid">
-          <article class="flow-step">
-            <span class="step-num">1</span>
+    <!-- Before / After Diff Comparison (Plannotator Inspired) -->
+    <section class="section-block">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-kicker">Why Bi-Temporal Memory Matters</p>
+          <h2 class="section-title">Vector stores stuff contradictions into your prompt. Cortex retires them.</h2>
+          <p class="section-desc">When an engineering team migrates token formats or database isolation levels, append-only RAG surfaces both old and new notes simultaneously.</p>
+        </div>
+
+        <div class="grid-2">
+          <article class="diff-card">
+            <div class="diff-head">
+              <span>Append-Only Vector Store / Static Rules</span>
+              <span class="pill-tag danger">Hallucination Risk</span>
+            </div>
+            <div class="diff-body">
+              <div class="diff-line del">- [chunk_14 · sim 0.89] "auth_service uses JWT_HS256 signed with HMAC_SHA256_SHARED_SECRET"</div>
+              <div class="diff-line del">- [chunk_87 · sim 0.87] "auth_service migrated to PASETO_v4_public with Ed25519 keypair"</div>
+              <div class="diff-line neutral">! Agent sees contradictory facts, wastes 420+ tokens, and patches legacy JWT middleware.</div>
+            </div>
+          </article>
+
+          <article class="diff-card">
+            <div class="diff-head">
+              <span>Cortex-MCP Bi-Temporal Compiler</span>
+              <span class="pill-tag">100% Stale Suppressed</span>
+            </div>
+            <div class="diff-body">
+              <div class="diff-line neutral">~ [fact_auth_token_v1] closed: valid_until=2026-04-20, superseded_by=fact_auth_token_v2</div>
+              <div class="diff-line add">+ [FACT:fact_auth_token_v2] auth_service --(uses_token_format)--&gt; PASETO_v4_public</div>
+              <div class="diff-line add">+ [INVARIANT:ep_inv_007] 2-hop neighbor payment_ledger SERIALIZABLE_WITH_IDEMPOTENCY_KEY (@sha256)</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3-Column Bento: Everything Cortex-MCP Ships (Plannotator Style) -->
+    <section class="section-block">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-kicker">Architecture &amp; Capabilities</p>
+          <h2 class="section-title">Everything inside the MCP server</h2>
+          <p class="section-desc">Zero runtime cloud dependencies. Standard JSON-RPC 2.0 over stdio, HTTP/SSE, and serverless FastAPI.</p>
+        </div>
+
+        <div class="grid-3">
+          <div class="card bento-col">
+            <h3>7 MCP Tools</h3>
+            <div class="bento-list">
+              <a class="bento-item" href="rules.html#tool-memory_record_episode">
+                <code>memory_record_episode</code>
+                <span>Immutable ADRs, invariants, migrations, and bug root causes</span>
+              </a>
+              <a class="bento-item" href="rules.html#tool-memory_upsert_fact">
+                <code>memory_upsert_fact</code>
+                <span>Singular predicates auto-close prior conflicting edges</span>
+              </a>
+              <a class="bento-item" href="rules.html#tool-memory_compile_context">
+                <code>memory_compile_context</code>
+                <span>Okapi BM25 + 2-hop activation within strict max_tokens</span>
+              </a>
+              <a class="bento-item" href="rules.html#tool-cortex_audit_contradictions">
+                <code>cortex_audit_contradictions</code>
+                <span>Polarity, antonym, alias &amp; multi-value drift auditor</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="card bento-col">
+            <h3>Deterministic Safety</h3>
+            <div class="bento-list">
+              <a class="bento-item" href="docs.html#bitemporal">
+                <code>valid_from / valid_until / superseded_by</code>
+                <span>Full point-in-time travel via memory_time_travel(as_of)</span>
+              </a>
+              <a class="bento-item" href="rules.html#tool-memory_verify_integrity">
+                <code>SHA-256 Merkle Root</code>
+                <span>Tamper-evident canonical hashing over every fact &amp; episode</span>
+              </a>
+              <a class="bento-item" href="docs.html#contradictions">
+                <code>4 Conflict Detectors</code>
+                <span>Negation polarity, technical antonyms, aliases &amp; drift</span>
+              </a>
+              <a class="bento-item" href="docs.html#compiler">
+                <code>Code-Aware Tokenizer</code>
+                <span>Splits snake_case, CamelCase &amp; paths for exact symbol boost</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="card bento-col">
+            <h3>Transports &amp; Grounding</h3>
+            <div class="bento-list">
+              <a class="bento-item" href="docs.html#transports">
+                <code>stdio &middot; HTTP/SSE &middot; Streamable HTTP</code>
+                <span>Local JSON persistence or hosted Vercel stateless gateway</span>
+              </a>
+              <a class="bento-item" href="docs.html#truthgate">
+                <code>TruthGate SourceDocument Export</code>
+                <span>Emit citation-verifiable JSON bundles via export-sources</span>
+              </a>
+              <a class="bento-item" href="rules.html#res-summary">
+                <code>3 Resources &amp; 2 Prompt Templates</code>
+                <span>cortex://graph/summary, integrity, architecture-briefing</span>
+              </a>
+              <a class="bento-item" href="docs.html#cli">
+                <code>7 CLI Subcommands</code>
+                <span>demo, benchmark, serve-stdio, serve-http, audit, export</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3-Step Workflow + Interactive Scenario Preview -->
+    <section class="section-block">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-kicker">How It Works</p>
+          <h2 class="section-title">Three deterministic stages from session amnesia to verified prompts</h2>
+        </div>
+
+        <div class="grid-3" style="margin-bottom:28px;">
+          <article class="card interactive">
+            <span class="step-badge">01</span>
             <h3>Record &amp; Supersede</h3>
-            <p>Upsert structured facts with transaction + valid timestamps. Singular predicates supersede prior claims automatically.</p>
+            <p>Upsert structured facts with transaction and valid timestamps. Writing a new singular predicate atomically closes the prior claim's validity window.</p>
           </article>
-          <article class="flow-step">
-            <span class="step-num">2</span>
+          <article class="card interactive">
+            <span class="step-badge">02</span>
             <h3>Audit Contradictions</h3>
-            <p>Detect negation polarity conflicts, antonym object pairs, predicate alias collisions, and concurrent drift.</p>
+            <p>Detect negation polarity inversions, opposing technical antonyms, predicate alias collisions, and unsuperseded concurrent drift.</p>
           </article>
-          <article class="flow-step">
-            <span class="step-num">3</span>
+          <article class="card interactive">
+            <span class="step-badge">03</span>
             <h3>Compile Token Budget</h3>
-            <p>Rank active subgraphs with Okapi BM25, 2-hop spreading activation, SHA-256 Merkle proof, and TruthGate export.</p>
+            <p>Rank active subgraphs with Okapi BM25 and 2-hop spreading activation, pack within <code>max_tokens</code>, and export TruthGate citation bundles.</p>
           </article>
         </div>
-      </section>
 
-      <section class="flow-section">
-        <p class="section-label">Interactive Preview</p>
-        <h2 class="section-heading">Inspect live supersession &amp; conflict scenarios</h2>
-        <div class="handy-card soft">
-          <label class="field-label" for="quickSampleSelect">Choose scenario</label>
-          <select id="quickSampleSelect" class="handy-select" style="margin-bottom:14px;">
-            <option value="supersession">Auth Token Supersession &amp; Polarity Conflict</option>
-            <option value="antonym">Ledger Antonym &amp; Predicate Alias Drift</option>
-            <option value="briefing">Clean 2-Hop Architecture &amp; TruthGate Export</option>
-          </select>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+            <div>
+              <h3 style="margin:0 0 4px;">Live Contradiction &amp; Supersession Preview</h3>
+              <p style="margin:0;font-size:0.86rem;color:var(--muted);">Switch engineering scenarios to inspect how Cortex-MCP flags drift before compilation.</p>
+            </div>
+            <div class="preset-bar" style="margin:0;">
+              <button type="button" class="preset-chip active" data-home-preset="supersession">Auth Polarity</button>
+              <button type="button" class="preset-chip" data-home-preset="antonym">Antonym + Alias</button>
+              <button type="button" class="preset-chip" data-home-preset="briefing">Clean 2-Hop</button>
+            </div>
+          </div>
           <div id="quickSampleOut"></div>
-          <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
-            <a class="btn-primary btn-sm" href="studio.html">Launch Full Studio</a>
-            <a class="btn-secondary btn-sm" href="rules.html">Browse 7 MCP Tools</a>
+          <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+            <a class="btn btn-primary btn-sm" href="studio.html">Launch Interactive Studio &rarr;</a>
+            <a class="btn btn-secondary btn-sm" href="rules.html">Browse 7 MCP Tools</a>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="flow-section">
-        <p class="section-label">Measured Benchmark (500 Facts / 100 Episodes)</p>
-        <h2 class="section-heading">Deterministic local throughput without cloud vector DBs</h2>
-        <div class="stat-grid">
-          <div class="stat-box">
-            <div class="stat-val">100.0%</div>
-            <div class="stat-lbl">Stale-Fact Suppression</div>
+    <!-- Benchmark Strip -->
+    <section class="section-block">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-kicker">Reproducible Evidence (500 Facts &middot; 150 Supersessions &middot; 100 Episodes)</p>
+          <h2 class="section-title">Sub-millisecond graph operations without cloud latency</h2>
+          <p class="section-desc">Measured via <code>cortex-mcp benchmark</code> across 60 entities and 50 context compilation queries.</p>
+        </div>
+
+        <div class="grid-4">
+          <div class="stat-card">
+            <div class="stat-value">100.0%</div>
+            <div class="stat-label">Stale-Fact Suppression</div>
+            <div class="stat-sub">0 leaked stale facts / 50 queries</div>
           </div>
-          <div class="stat-box">
-            <div class="stat-val">0.004 ms</div>
-            <div class="stat-lbl">Fact Upsert P50</div>
+          <div class="stat-card">
+            <div class="stat-value">0.004 ms</div>
+            <div class="stat-label">Fact Upsert P50</div>
+            <div class="stat-sub">P95: 0.006 ms (with supersession)</div>
           </div>
-          <div class="stat-box">
-            <div class="stat-val">5.750 ms</div>
-            <div class="stat-lbl">800-Tok Compile P50</div>
+          <div class="stat-card">
+            <div class="stat-value">5.750 ms</div>
+            <div class="stat-label">800-Tok Compile P50</div>
+            <div class="stat-sub">BM25 + 2-hop graph activation</div>
           </div>
-          <div class="stat-box">
-            <div class="stat-val">1.756 ms</div>
-            <div class="stat-lbl">600 SHA-256 Verify</div>
+          <div class="stat-card">
+            <div class="stat-value">1.756 ms</div>
+            <div class="stat-label">600 SHA-256 Verify</div>
+            <div class="stat-sub">Full graph Merkle root pass</div>
           </div>
         </div>
-      </section>
 
-      <section class="flow-section">
-        <p class="section-label">Frequently Asked Questions</p>
-        <h2 class="section-heading">Engineering design details</h2>
+        <div style="text-align:center;margin-top:24px;">
+          <a class="btn btn-secondary" href="proof.html">Explore Full Benchmark Report &amp; ADRs &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section-block">
+      <div class="container" style="max-width:860px;">
+        <div class="section-header">
+          <p class="section-kicker">Engineering FAQ</p>
+          <h2 class="section-title">Design decisions &amp; operational guarantees</h2>
+        </div>
+
         <details class="faq-item">
           <summary>Why bi-temporal tracking instead of a flat vector store?</summary>
           <p>Vector similarity treats deprecated config (like <code>JWT_HS256</code>) and its replacement (<code>PASETO_v4_public</code>) as equally true neighbors. Bi-temporal bounds (<code>valid_from</code>, <code>valid_until</code>, <code>superseded_by</code>) exclude superseded facts while preserving historical time travel via <code>memory_time_travel</code>.</p>
         </details>
         <details class="faq-item">
-          <summary>How does Cortex-MCP integrate with TruthGate and hosted MCP clients?</summary>
-          <p><code>cortex-mcp export-sources</code> emits verified <code>GroundedSourceDocument</code> payloads for citation verification, while <code>api/index.py</code> exposes Streamable HTTP at <code>POST /mcp</code> and local agents connect over <code>stdio</code> or HTTP/SSE.</p>
+          <summary>What is the difference between the hosted Vercel endpoint and local stdio?</summary>
+          <p>The hosted Vercel endpoint (<code>https://cortex-mcp-steel.vercel.app/mcp</code>) runs statelessly in memory per serverless instance for instant zero-install testing. For private, persistent project memory saved atomically to disk, run <code>cortex-mcp serve-stdio --storage .cortex/memory.json</code>.</p>
+        </details>
+        <details class="faq-item">
+          <summary>How does Cortex-MCP integrate with TruthGate?</summary>
+          <p><code>cortex-mcp export-sources</code> (and <code>export_truthgate_sources()</code>) emit verified <code>GroundedSourceDocument</code> payloads carrying temporal provenance and the graph SHA-256 Merkle root so downstream verification gates can prove zero stale-fact citation.</p>
         </details>
         <details class="faq-item">
           <summary>How is tampering detected in local graph storage?</summary>
-          <p>Every recorded episode and fact participates in a SHA-256 hash chain and deterministic Merkle root digest checked by <code>memory_verify_integrity</code>.</p>
+          <p>Every recorded episode and temporal fact participates in a canonical SHA-256 hash and deterministic Merkle root digest checked by <code>memory_verify_integrity</code> and exposed on <code>cortex://graph/integrity</code>.</p>
         </details>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <span>Cortex-MCP v1.2.0 &middot; MIT License &middot; Codesphere Innovations (U) Limited</span>
-      <div class="footer-links">
-        <a href="docs.html">Docs</a>
-        <a href="studio.html">Studio</a>
-        <a href="llms.txt">llms.txt</a>
-        <a href="https://github.com/codesphere-u/cortex-mcp/releases/tag/v1.2.0">Release v1.2.0</a>
       </div>
-    </footer>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a class="brand-link" href="index.html" style="margin-bottom:10px;">
+            <img class="brand-icon" src="favicon.svg" alt="" width="28" height="28" />
+            <span>Cortex-MCP</span>
+          </a>
+          <p style="font-size:0.84rem;color:var(--muted);margin:0;max-width:290px;">
+            Local-first bi-temporal knowledge graph, contradiction auditor, and token-budgeted context compiler for AI coding agents.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="index.html">Overview</a></li>
+            <li><a href="studio.html">Memory Studio</a></li>
+            <li><a href="rules.html">Tools &amp; Rules</a></li>
+            <li><a href="proof.html">Benchmarks</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Documentation</h4>
+          <ul>
+            <li><a href="docs.html#install">Quickstart</a></li>
+            <li><a href="docs.html#client-setup">MCP Client Setup</a></li>
+            <li><a href="docs.html#transports">Transports Guide</a></li>
+            <li><a href="docs.html#cli">CLI Reference</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Deployments</h4>
+          <ul>
+            <li><a href="https://cortex-mcp-steel.vercel.app">Vercel Developer Portal</a></li>
+            <li><a href="https://cortex-mcp-steel.vercel.app/health">Gateway Health Probe</a></li>
+            <li><a href="https://github.com/codesphere-u/cortex-mcp">GitHub Repository</a></li>
+            <li><a href="https://github.com/codesphere-u/cortex-mcp/releases/tag/v1.2.0">Release v1.2.0</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>For Agents</h4>
+          <ul>
+            <li><a href="llms.txt">llms.txt</a></li>
+            <li><a href="llms-full.txt">llms-full.txt</a></li>
+            <li><a href="sitemap.xml">sitemap.xml</a></li>
+            <li><a href="robots.txt">robots.txt</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>Cortex-MCP v1.2.0 &middot; MIT License &middot; Akandwanaho Ivan Alvin &middot; Codesphere Innovations (U) Limited</span>
+        <div class="footer-agent-links">
+          <span>MCP 2024-11-05</span>
+          <span>&middot;</span>
+          <a href="llms.txt">Agent Index</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Global Cmd+K Search Modal -->
+  <div id="cmdBackdrop" class="cmd-backdrop" role="dialog" aria-modal="true" aria-label="Search Cortex-MCP documentation">
+    <div class="cmd-dialog">
+      <div class="cmd-input-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="cmdSearchInput" type="search" placeholder="Search tools, MCP client setup, CLI commands, rules..." autocomplete="off" />
+        <kbd style="font-size:0.72rem;padding:2px 6px;border-radius:5px;border:1px solid var(--line);color:var(--muted);">ESC</kbd>
+      </div>
+      <div id="cmdResults" class="cmd-results"></div>
+    </div>
   </div>
+
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script defer data-domain="codesphere-u.github.io" src="https://plausible.io/js/script.js"></script>
   <script src="app.js"></script>

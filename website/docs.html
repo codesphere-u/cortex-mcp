@@ -3,82 +3,485 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Documentation — Cortex-MCP</title>
-  <meta name="description" content="Complete Cortex-MCP documentation covering installation, bi-temporal graph model, contradiction auditor, TruthGate export, and MCP/Vercel setup." />
+  <title>Documentation &amp; MCP Client Setup — Cortex-MCP</title>
+  <meta name="description" content="Complete Cortex-MCP documentation covering MCP client setup, transports, bi-temporal graph model, BM25 compiler, contradiction auditor, and CLI." />
   <link rel="canonical" href="https://codesphere-u.github.io/cortex-mcp/docs.html" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Documentation — Cortex-MCP" />
-  <meta property="og:description" content="Guides for Cortex-MCP CLI, Okapi BM25 context compilation, contradiction auditing, and MCP transports." />
+  <meta property="og:title" content="Documentation &amp; MCP Client Setup — Cortex-MCP" />
+  <meta property="og:description" content="Guides for Cortex-MCP transports, Claude/Cursor/Windsurf/Antigravity setup, Okapi BM25 context compilation, and CLI subcommands." />
   <meta property="og:image" content="https://codesphere-u.github.io/cortex-mcp/og-image.svg" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="docs-layout">
-    <aside class="docs-sidebar">
-      <a class="docs-brand" href="index.html">
-        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
-          <rect width="64" height="64" rx="16" fill="#064e3b"/>
-          <path d="M18 32c6-12 22-12 28 0" stroke="#34d399" stroke-width="4" stroke-linecap="round"/>
-          <path d="M18 32c6 12 22 12 28 0" stroke="#fbbf24" stroke-width="4" stroke-linecap="round"/>
-          <circle cx="18" cy="32" r="5" fill="#d1fae5"/>
-          <circle cx="46" cy="32" r="5" fill="#fef3c7"/>
-        </svg>
+  <div class="announcement-bar">
+    <span class="pill-tag">Docs</span>
+    <span>MCP Protocol 2024-11-05 &middot; Streamable HTTP, Local Stdio, and SSE Transports</span>
+    <a href="studio.html">Try Memory Studio &rarr;</a>
+  </div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand-link" href="index.html">
+        <img class="brand-icon" src="favicon.svg" alt="" width="30" height="30" />
         <span>Cortex-MCP</span>
+        <span class="version-chip">v1.2.0</span>
       </a>
-      <nav class="docs-nav" aria-label="Documentation Navigation">
-        <a href="index.html">Home</a>
-        <a href="studio.html">Studio</a>
+
+      <nav class="nav-links" aria-label="Primary Navigation">
+        <a href="index.html">Overview</a>
+        <a href="studio.html">Memory Studio</a>
+        <a href="rules.html">Tools &amp; Rules</a>
         <a href="proof.html">Benchmarks</a>
-        <a href="rules.html">MCP &amp; Rules</a>
         <a href="docs.html" class="active">Docs</a>
-        <a href="https://github.com/codesphere-u/cortex-mcp">GitHub</a>
       </nav>
-      <div class="docs-rail-foot">v1.2.0 &middot; MIT License</div>
+
+      <div class="nav-actions">
+        <button type="button" class="search-trigger" data-open-search aria-label="Search documentation">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>Search...</span>
+          <kbd>&#8984;K</kbd>
+        </button>
+        <button id="themeToggleBtn" type="button" class="icon-btn" aria-label="Toggle color theme"></button>
+        <a class="icon-btn" href="https://github.com/codesphere-u/cortex-mcp" aria-label="GitHub repository">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        </a>
+        <button id="mobileMenuBtn" type="button" class="icon-btn mobile-menu-btn" aria-label="Open menu" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+    <nav id="mobileDrawer" class="mobile-drawer" aria-label="Mobile Navigation">
+      <a href="index.html">Overview</a>
+      <a href="studio.html">Memory Studio</a>
+      <a href="rules.html">Tools &amp; Rules</a>
+      <a href="proof.html">Benchmarks</a>
+      <a href="docs.html" class="active">Documentation</a>
+      <a href="docs.html#client-setup">Connect MCP Client</a>
+      <a href="https://github.com/codesphere-u/cortex-mcp">GitHub Repository</a>
+    </nav>
+  </header>
+
+  <!-- 3-Column Documentation Layout (AG-UI + Stitch Pattern) -->
+  <div class="docs-shell">
+    <aside class="docs-left-nav" aria-label="Documentation Navigation">
+      <div class="docs-group">
+        <div class="docs-group-title">Get Started</div>
+        <nav class="docs-tree">
+          <a href="#overview" class="active">Overview</a>
+          <a href="#install">Installation &amp; Quickstart</a>
+          <a href="#transports">Transports: Local vs Hosted</a>
+          <a href="#client-setup">MCP Client Setup</a>
+        </nav>
+      </div>
+      <div class="docs-group">
+        <div class="docs-group-title">Core Engine</div>
+        <nav class="docs-tree">
+          <a href="#architecture">System Architecture</a>
+          <a href="#bitemporal">Bi-Temporal Graph Model</a>
+          <a href="#compiler">BM25 + 2-Hop Compiler</a>
+          <a href="#contradictions">Contradiction Auditor</a>
+          <a href="#truthgate">TruthGate Export</a>
+        </nav>
+      </div>
+      <div class="docs-group">
+        <div class="docs-group-title">Reference</div>
+        <nav class="docs-tree">
+          <a href="#cli">CLI Subcommands</a>
+          <a href="rules.html">7 MCP Tools &amp; Schemas &rarr;</a>
+          <a href="proof.html">Benchmarks &amp; ADRs &rarr;</a>
+        </nav>
+      </div>
     </aside>
 
-    <main class="docs-main">
-      <h1>Cortex-MCP Documentation</h1>
-      <p style="color:var(--muted);">Local-first bi-temporal memory graph, contradiction auditor, and token-budgeted MCP server.</p>
+    <article class="docs-article">
+      <div class="docs-breadcrumb">Get Started &middot; Documentation</div>
+      <h1 id="overview">Cortex-MCP Documentation</h1>
+      <p>
+        <strong>Cortex-MCP</strong> (<code>cortex-bitemporal-mcp</code>) is a local-first bi-temporal knowledge graph, contradiction auditor, and token-budgeted context compiler exposed over the <strong>Model Context Protocol (MCP)</strong> JSON-RPC 2.0 specification.
+      </p>
 
-      <nav class="doc-subrail" aria-label="Page Sections">
-        <a href="#install">Install</a>
-        <a href="#bitemporal">Bi-Temporal Model</a>
-        <a href="#compiler">BM25 Compiler</a>
-        <a href="#contradictions">Contradictions</a>
-        <a href="#truthgate">TruthGate Export</a>
-        <a href="#mcp">MCP &amp; CLI</a>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Protocol Layer</th>
+              <th>Responsibility in Agent Stack</th>
+              <th>Cortex-MCP Implementation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>MCP Transport</strong></td>
+              <td>Agent &harr; Memory Graph tools, resources, prompts</td>
+              <td><code>CortexMCPServer</code> over <code>stdio</code>, HTTP/SSE, Vercel Streamable HTTP</td>
+            </tr>
+            <tr>
+              <td><strong>Bi-Temporal Graph</strong></td>
+              <td>Track valid time vs transaction supersession</td>
+              <td><code>BiTemporalMemoryGraph</code> with <code>valid_from</code>, <code>valid_until</code>, <code>superseded_by</code></td>
+            </tr>
+            <tr>
+              <td><strong>Context Compilation</strong></td>
+              <td>Rank &amp; pack facts under strict token budget</td>
+              <td><code>ContextCompiler</code> (Okapi BM25 + 2-hop graph activation, 100% stale filter)</td>
+            </tr>
+            <tr>
+              <td><strong>Grounded Verification</strong></td>
+              <td>Export provenance-cited source bundles</td>
+              <td><code>export_truthgate_sources()</code> for <code>codesphere-u/truthgate</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="install">1. Installation &amp; Quickstart</h2>
+      <p>Run zero-install with <code>uvx</code>, install from GitHub, or clone editable for local development and tests.</p>
+
+      <div data-tab-group>
+        <div class="preset-bar" style="margin-bottom:10px;">
+          <button type="button" class="preset-chip active" data-tab-target="inst-uvx">uvx (Zero Install)</button>
+          <button type="button" class="preset-chip" data-tab-target="inst-pip">pip (From GitHub)</button>
+          <button type="button" class="preset-chip" data-tab-target="inst-dev">Local Dev &amp; Pytest</button>
+        </div>
+
+        <div data-tab-pane="inst-uvx" style="display:block;">
+          <div class="code-card">
+            <div class="code-header">
+              <span class="code-lang"><span class="code-dots"><i></i><i></i><i></i></span>bash</span>
+              <button type="button" class="copy-btn" data-copy-target="codeInstUvx">Copy</button>
+            </div>
+            <pre><code id="codeInstUvx"><span class="tok-f">uvx</span> <span class="tok-k">--from</span> <span class="tok-s">git+https://github.com/codesphere-u/cortex-mcp.git</span> cortex-mcp demo
+<span class="tok-f">uvx</span> <span class="tok-k">--from</span> <span class="tok-s">git+https://github.com/codesphere-u/cortex-mcp.git</span> cortex-mcp benchmark</code></pre>
+          </div>
+        </div>
+
+        <div data-tab-pane="inst-pip" style="display:none;">
+          <div class="code-card">
+            <div class="code-header">
+              <span class="code-lang"><span class="code-dots"><i></i><i></i><i></i></span>bash</span>
+              <button type="button" class="copy-btn" data-copy-target="codeInstPip">Copy</button>
+            </div>
+            <pre><code id="codeInstPip"><span class="tok-f">pip</span> install <span class="tok-s">"git+https://github.com/codesphere-u/cortex-mcp.git@v1.2.0"</span>
+<span class="tok-f">cortex-mcp</span> <span class="tok-k">--help</span></code></pre>
+          </div>
+        </div>
+
+        <div data-tab-pane="inst-dev" style="display:none;">
+          <div class="code-card">
+            <div class="code-header">
+              <span class="code-lang"><span class="code-dots"><i></i><i></i><i></i></span>bash</span>
+              <button type="button" class="copy-btn" data-copy-target="codeInstDev">Copy</button>
+            </div>
+            <pre><code id="codeInstDev"><span class="tok-f">git</span> clone https://github.com/codesphere-u/cortex-mcp.git
+<span class="tok-f">cd</span> cortex-mcp
+<span class="tok-f">pip</span> install -e <span class="tok-s">".[dev]"</span>
+<span class="tok-f">pytest</span> <span class="tok-k">-v</span></code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <span class="callout-icon">&#10003;</span>
+        <div>
+          <strong>Package Naming Note:</strong> The PyPI distribution name is <code>cortex-bitemporal-mcp</code> (because <code>cortex-mcp</code> belongs to an unrelated package), while the CLI binary and import module remain <code>cortex-mcp</code> and <code>cortex_mcp</code>.
+        </div>
+      </div>
+
+      <h2 id="transports">2. Transports: Hosted Streamable HTTP vs Local Stdio</h2>
+      <p>Choose between the zero-setup public Vercel gateway for experimentation or local <code>stdio</code> / self-hosted HTTP for persistent project memory.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Transport</th>
+              <th>Endpoint / Command</th>
+              <th>Persistence &amp; Privacy</th>
+              <th>Recommended For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Hosted Streamable HTTP</strong></td>
+              <td><code>https://cortex-mcp-steel.vercel.app/mcp</code></td>
+              <td>Ephemeral in-memory serverless instance (shared across warm callers)</td>
+              <td>Instant demos, schema exploration, zero-install smoke tests</td>
+            </tr>
+            <tr>
+              <td><strong>Local Stdio</strong></td>
+              <td><code>cortex-mcp serve-stdio --storage .cortex/memory.json</code></td>
+              <td>100% local atomic JSON file on disk, zero network egress</td>
+              <td>Production coding workflows in Claude Code, Cursor, Claude Desktop</td>
+            </tr>
+            <tr>
+              <td><strong>Self-Hosted HTTP / SSE</strong></td>
+              <td><code>cortex-mcp serve-http --host 127.0.0.1 --port 8000</code></td>
+              <td>Local or Docker container (supports <code>POST /mcp</code> &amp; <code>GET /sse</code>)</td>
+              <td>Shared team knowledge graph or remote agent runtimes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">!</span>
+        <div>
+          <strong>Hosted Ephemeral State Warning:</strong> All 7 MCP tools work on the hosted Vercel gateway, but state is per-instance and ephemeral. Always pass <code>--storage .cortex/memory.json</code> via local <code>stdio</code> for private, durable engineering memory.
+        </div>
+      </div>
+
+      <h2 id="client-setup">3. MCP Client Configuration</h2>
+      <p>Select your AI coding client below to inspect exact config file paths and copy-ready setup snippets.</p>
+
+      <div class="quick-connect-shell" data-client-switcher style="margin:18px 0 24px;">
+        <div class="client-tabs" role="tablist" aria-label="Documentation Client Selector">
+          <button type="button" class="client-pill active" data-client="claude-code" role="tab">Claude Code</button>
+          <button type="button" class="client-pill" data-client="cursor" role="tab">Cursor</button>
+          <button type="button" class="client-pill" data-client="windsurf" role="tab">Windsurf</button>
+          <button type="button" class="client-pill" data-client="claude-desktop" role="tab">Claude Desktop</button>
+          <button type="button" class="client-pill" data-client="antigravity" role="tab">Antigravity / VS Code</button>
+          <button type="button" class="client-pill" data-client="uvx-stdio" role="tab">Local uvx</button>
+        </div>
+        <div class="client-panel-meta">
+          <span>Config location: <code class="client-path" data-client-path>Project or User Scope</code></span>
+          <span class="pill-tag cyan" data-client-transport>Streamable HTTP</span>
+        </div>
+        <div class="code-card">
+          <div class="code-header">
+            <span class="code-lang"><span class="code-dots"><i></i><i></i><i></i></span><span data-client-lang>bash</span></span>
+            <button type="button" class="copy-btn" data-client-copy data-copy="">Copy</button>
+          </div>
+          <pre><code data-client-code></code></pre>
+        </div>
+      </div>
+
+      <h3>Verify Hosted Endpoint via cURL</h3>
+      <div class="code-card">
+        <div class="code-header">
+          <span class="code-lang"><span class="code-dots"><i></i><i></i><i></i></span>bash</span>
+          <button type="button" class="copy-btn" data-copy-target="codeCurlProbe">Copy</button>
+        </div>
+        <pre><code id="codeCurlProbe"><span class="tok-f">curl</span> <span class="tok-k">-s -X POST</span> https://cortex-mcp-steel.vercel.app/mcp \
+  <span class="tok-k">-H</span> <span class="tok-s">"Content-Type: application/json"</span> \
+  <span class="tok-k">-d</span> <span class="tok-s">'{"jsonrpc":"2.0","id":1,"method":"tools/list"}'</span></code></pre>
+      </div>
+
+      <h2 id="architecture">4. System Architecture</h2>
+      <p>Cortex-MCP routes JSON-RPC 2.0 tool, resource, and prompt calls cleanly into two deterministic core engines backed by atomic JSON snapshots.</p>
+
+      <div class="card" style="padding:18px;margin:16px 0 24px;">
+        <svg viewBox="0 0 760 250" width="100%" role="img" aria-label="Cortex-MCP architecture flow diagram">
+          <rect x="20" y="16" width="720" height="46" rx="10" fill="#111a26" stroke="#38bdf8" stroke-width="1.5"/>
+          <text x="380" y="44" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="700" font-family="Inter, sans-serif">AI Coding Agents (Claude Code &middot; Cursor &middot; Windsurf &middot; Antigravity)</text>
+
+          <line x1="380" y1="62" x2="380" y2="92" stroke="#10b981" stroke-width="2"/>
+          <text x="394" y="82" fill="#94a3b8" font-size="10.5" font-family="JetBrains Mono, monospace">JSON-RPC 2.0 (stdio / Streamable HTTP / SSE)</text>
+
+          <rect x="110" y="94" width="540" height="46" rx="10" fill="#0d1d1a" stroke="#10b981" stroke-width="1.8"/>
+          <text x="380" y="122" text-anchor="middle" fill="#34d399" font-size="13" font-weight="700" font-family="JetBrains Mono, monospace">CortexMCPServer (server.py) &mdash; 7 Tools &middot; 3 Resources &middot; 2 Prompts</text>
+
+          <line x1="250" y1="140" x2="200" y2="168" stroke="#10b981" stroke-width="1.8"/>
+          <line x1="510" y1="140" x2="560" y2="168" stroke="#38bdf8" stroke-width="1.8"/>
+
+          <rect x="20" y="170" width="340" height="66" rx="10" fill="#111720" stroke="#10b981" stroke-opacity="0.55" stroke-width="1.4"/>
+          <text x="190" y="194" text-anchor="middle" fill="#f1f5f9" font-size="12.5" font-weight="700" font-family="JetBrains Mono, monospace">BiTemporalMemoryGraph (graph.py)</text>
+          <text x="190" y="216" text-anchor="middle" fill="#94a3b8" font-size="10.5" font-family="Inter, sans-serif">Supersession &middot; K-Hop BFS &middot; SHA-256 Merkle &middot; Atomic JSON</text>
+
+          <rect x="400" y="170" width="340" height="66" rx="10" fill="#111720" stroke="#38bdf8" stroke-opacity="0.55" stroke-width="1.4"/>
+          <text x="570" y="194" text-anchor="middle" fill="#f1f5f9" font-size="12.5" font-weight="700" font-family="JetBrains Mono, monospace">ContextCompiler &amp; Auditor</text>
+          <text x="570" y="216" text-anchor="middle" fill="#94a3b8" font-size="10.5" font-family="Inter, sans-serif">Okapi BM25 &middot; 2-Hop Activation &middot; Knapsack &middot; TruthGate</text>
+        </svg>
+      </div>
+
+      <h2 id="bitemporal">5. Bi-Temporal Graph Model</h2>
+      <p>
+        Every <code>TemporalFact</code> stores both valid time (<code>valid_from</code>, <code>valid_until</code>) and causal supersession lineage (<code>superseded_by</code>). When <code>memory_upsert_fact</code> writes a <code>singular=True</code> fact for an existing <code>(subject_id, predicate)</code> pair, the prior fact is atomically closed without erasing history.
+      </p>
+      <ul>
+        <li><strong>Point-in-Time Inspection:</strong> <code>memory_time_travel(as_of)</code> reconstructs active architecture at any historical UTC timestamp.</li>
+        <li><strong>Tamper-Evident Persistence:</strong> Canonical SHA-256 hashes over every fact and episode feed a deterministic Merkle root digest checked by <code>memory_verify_integrity</code>.</li>
+      </ul>
+
+      <h2 id="compiler">6. Okapi BM25 &amp; 2-Hop Context Compiler</h2>
+      <p>
+        <code>ContextCompiler</code> splits <code>snake_case</code>, <code>CamelCase</code>, and file paths into sub-tokens, scores candidates with Okapi BM25 plus exact identifier boosting, activates 2-hop graph neighbors across active edges, and runs greedy utility-density packing under <code>max_tokens</code> with <strong>100% stale-fact suppression</strong>.
+      </p>
+
+      <h2 id="contradictions">7. Semantic Contradiction Auditor</h2>
+      <p>
+        <code>ContradictionAuditor</code> scans active facts to catch four conflict classes: <code>negation_polarity_conflict</code>, <code>antonym_object_conflict</code>, <code>predicate_alias_conflict</code>, and <code>unsuperseded_value_conflict</code>. Pass <code>auto_resolve=True</code> or run CLI <code>--auto-resolve</code> to deterministically supersede older or lower-confidence claims.
+      </p>
+
+      <div class="code-card">
+        <div class="code-header">
+          <span class="code-lang"><span class="code-dots"><i></i><i></i><i></i></span>python</span>
+          <button type="button" class="copy-btn" data-copy-target="codePyAudit">Copy</button>
+        </div>
+        <pre><code id="codePyAudit"><span class="tok-k">from</span> cortex_mcp <span class="tok-k">import</span> audit_contradictions, export_truthgate_sources
+
+report = <span class="tok-f">audit_contradictions</span>(graph, auto_resolve=<span class="tok-n">True</span>)
+<span class="tok-f">print</span>(report.summary_markdown)</code></pre>
+      </div>
+
+      <h2 id="truthgate">8. TruthGate Grounded Export</h2>
+      <p>
+        Export compiled context packets or active graph facts into <code>TruthGate</code>-compatible <code>GroundedSourceDocument</code> JSON arrays carrying temporal provenance and <code>graph_merkle_digest</code>:
+      </p>
+      <div class="code-card">
+        <div class="code-header">
+          <span class="code-lang"><span class="code-dots"><i></i><i></i><i></i></span>bash</span>
+          <button type="button" class="copy-btn" data-copy-target="codeExportCmd">Copy</button>
+        </div>
+        <pre><code id="codeExportCmd"><span class="tok-f">cortex-mcp</span> export-sources <span class="tok-k">--query</span> <span class="tok-s">"auth_service uses_token_format"</span> <span class="tok-k">--max-tokens</span> <span class="tok-n">1200</span> <span class="tok-k">--output</span> sources.json</code></pre>
+      </div>
+
+      <h2 id="cli">9. CLI Subcommand Reference</h2>
+      <p>All 7 CLI subcommands defined in <code>src/cortex_mcp/cli.py</code>:</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Subcommand</th>
+              <th>Key Flags</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>cortex-mcp demo</code></td>
+              <td><code>--json</code></td>
+              <td>Run multi-session supersession &amp; time-travel demo</td>
+            </tr>
+            <tr>
+              <td><code>cortex-mcp benchmark</code></td>
+              <td><code>--facts 500 --episodes 100 --json</code></td>
+              <td>Measure P50/P95 latencies &amp; stale-fact suppression</td>
+            </tr>
+            <tr>
+              <td><code>cortex-mcp serve-stdio</code></td>
+              <td><code>--storage PATH --seed-demo</code></td>
+              <td>Start JSON-RPC 2.0 MCP server over stdin/stdout (alias: <code>mcp</code>)</td>
+            </tr>
+            <tr>
+              <td><code>cortex-mcp serve-http</code></td>
+              <td><code>--host 0.0.0.0 --port 8000 --storage PATH</code></td>
+              <td>Start local HTTP &amp; SSE MCP transport server</td>
+            </tr>
+            <tr>
+              <td><code>cortex-mcp audit-contradictions</code></td>
+              <td><code>--storage PATH --auto-resolve --json</code></td>
+              <td>Scan active facts for logical/polarity contradictions</td>
+            </tr>
+            <tr>
+              <td><code>cortex-mcp export-sources</code></td>
+              <td><code>--storage PATH --query STR --max-tokens 1200 --output FILE</code></td>
+              <td>Export TruthGate <code>SourceDocument</code> JSON bundle</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:36px;padding-top:20px;border-top:1px solid var(--line);flex-wrap:wrap;">
+        <a class="btn btn-secondary" href="studio.html">&larr; Open Memory Studio</a>
+        <a class="btn btn-primary" href="rules.html">Next: 7 MCP Tools &amp; Schemas &rarr;</a>
+      </div>
+    </article>
+
+    <aside class="docs-right-toc" aria-label="On This Page">
+      <div class="toc-heading">On this page</div>
+      <nav class="toc-links">
+        <a href="#overview">Overview</a>
+        <a href="#install">1. Installation &amp; Quickstart</a>
+        <a href="#transports">2. Transports Comparison</a>
+        <a href="#client-setup">3. MCP Client Setup</a>
+        <a href="#architecture">4. System Architecture</a>
+        <a href="#bitemporal">5. Bi-Temporal Graph Model</a>
+        <a href="#compiler">6. BM25 Context Compiler</a>
+        <a href="#contradictions">7. Contradiction Auditor</a>
+        <a href="#truthgate">8. TruthGate Export</a>
+        <a href="#cli">9. CLI Reference</a>
       </nav>
-
-      <h2 id="install">1. Installation &amp; Quick Start</h2>
-      <p>Install editable with dev/gateway dependencies or run the interactive demo directly:</p>
-      <pre><code>git clone https://github.com/codesphere-u/cortex-mcp.git
-cd cortex-mcp
-pip install -e ".[dev]"
-cortex-mcp demo
-cortex-mcp benchmark</code></pre>
-
-      <h2 id="bitemporal">2. Bi-Temporal Graph Model</h2>
-      <p>Every <code>TemporalFact</code> tracks both valid time (<code>valid_from</code>, <code>valid_until</code>) and supersession pointers (<code>superseded_by</code>). Singular predicates automatically close superseded assertions while preserving full time-travel history via <code>memory_time_travel</code>.</p>
-
-      <h2 id="compiler">3. Okapi BM25 &amp; 2-Hop Context Compiler</h2>
-      <p><code>ContextCompiler</code> tokenizes CamelCase and <code>snake_case</code> identifiers, scores candidate facts and episodes with Okapi BM25, expands 2 hops across entity relations, and packs items strictly within <code>max_tokens</code> with <strong>100% stale-fact suppression</strong>.</p>
-
-      <h2 id="contradictions">4. Contradiction Auditor</h2>
-      <p><code>ContradictionAuditor</code> detects negation polarity conflicts, opposing antonym pairs, predicate alias collisions, and unsuperseded singular drift. Pass <code>auto_resolve=True</code> or run <code>cortex-mcp audit-contradictions --auto-resolve</code> to supersede lower-confidence or older conflicting facts.</p>
-
-      <h2 id="truthgate">5. TruthGate Grounded Export</h2>
-      <p>Export verified active context bundles directly into TruthGate <code>GroundedSourceDocument</code> JSON arrays:</p>
-      <pre><code>cortex-mcp export-sources --query "auth_service signing" --max-tokens 1200 --output sources.json</code></pre>
-
-      <h2 id="mcp">6. MCP Transports &amp; CLI Subcommands</h2>
-      <p>Connect Claude Code or Cursor to the hosted Vercel Streamable HTTP endpoint or run locally over <code>stdio</code> / HTTP SSE:</p>
-      <pre><code>claude mcp add --transport http cortex-mcp https://cortex-mcp-steel.vercel.app/mcp
-cortex-mcp serve-stdio --storage .cortex/memory.json --seed-demo
-cortex-mcp serve-http --host 127.0.0.1 --port 8080</code></pre>
-    </main>
+    </aside>
   </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a class="brand-link" href="index.html" style="margin-bottom:10px;">
+            <img class="brand-icon" src="favicon.svg" alt="" width="28" height="28" />
+            <span>Cortex-MCP</span>
+          </a>
+          <p style="font-size:0.84rem;color:var(--muted);margin:0;max-width:290px;">
+            Local-first bi-temporal knowledge graph, contradiction auditor, and token-budgeted context compiler for AI coding agents.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="index.html">Overview</a></li>
+            <li><a href="studio.html">Memory Studio</a></li>
+            <li><a href="rules.html">Tools &amp; Rules</a></li>
+            <li><a href="proof.html">Benchmarks</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Documentation</h4>
+          <ul>
+            <li><a href="docs.html#install">Quickstart</a></li>
+            <li><a href="docs.html#client-setup">MCP Client Setup</a></li>
+            <li><a href="docs.html#transports">Transports Guide</a></li>
+            <li><a href="docs.html#cli">CLI Reference</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Deployments</h4>
+          <ul>
+            <li><a href="https://cortex-mcp-steel.vercel.app">Vercel Developer Portal</a></li>
+            <li><a href="https://cortex-mcp-steel.vercel.app/health">Gateway Health Probe</a></li>
+            <li><a href="https://github.com/codesphere-u/cortex-mcp">GitHub Repository</a></li>
+            <li><a href="https://github.com/codesphere-u/cortex-mcp/releases/tag/v1.2.0">Release v1.2.0</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>For Agents</h4>
+          <ul>
+            <li><a href="llms.txt">llms.txt</a></li>
+            <li><a href="llms-full.txt">llms-full.txt</a></li>
+            <li><a href="sitemap.xml">sitemap.xml</a></li>
+            <li><a href="robots.txt">robots.txt</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>Cortex-MCP v1.2.0 &middot; MIT License &middot; Akandwanaho Ivan Alvin &middot; Codesphere Innovations (U) Limited</span>
+        <div class="footer-agent-links">
+          <span>MCP 2024-11-05</span>
+          <span>&middot;</span>
+          <a href="llms.txt">Agent Index</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="cmdBackdrop" class="cmd-backdrop" role="dialog" aria-modal="true" aria-label="Search Cortex-MCP documentation">
+    <div class="cmd-dialog">
+      <div class="cmd-input-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="cmdSearchInput" type="search" placeholder="Search tools, MCP client setup, CLI commands, rules..." autocomplete="off" />
+        <kbd style="font-size:0.72rem;padding:2px 6px;border-radius:5px;border:1px solid var(--line);color:var(--muted);">ESC</kbd>
+      </div>
+      <div id="cmdResults" class="cmd-results"></div>
+    </div>
+  </div>
+
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script src="app.js"></script>
 </body>

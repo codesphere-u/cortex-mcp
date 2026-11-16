@@ -12,90 +12,244 @@
   <meta property="og:image" content="https://codesphere-u.github.io/cortex-mcp/og-image.svg" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="page-col">
-    <header class="site-header">
-      <a class="brand-mark" href="index.html">
-        <svg class="brand-mascot" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-          <rect width="64" height="64" rx="16" fill="#064e3b"/>
-          <path d="M18 32h28M32 16v32" stroke="#d1fae5" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
-          <path d="M18 32c6-12 22-12 28 0" stroke="#059669" stroke-width="3.5" stroke-linecap="round"/>
-          <path d="M18 32c6 12 22 12 28 0" stroke="#d97706" stroke-width="3.5" stroke-linecap="round"/>
-          <circle cx="18" cy="32" r="5" fill="#d1fae5" stroke="#059669" stroke-width="2.5"/>
-          <circle cx="32" cy="18" r="5" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>
-          <circle cx="46" cy="32" r="5" fill="#d1fae5" stroke="#059669" stroke-width="2.5"/>
-          <circle cx="32" cy="46" r="4" fill="#059669"/>
-        </svg>
-        <svg class="brand-wordmark-svg" width="196" height="36" viewBox="0 0 196 36" role="img" aria-label="Cortex-MCP">
-          <text x="98" y="27" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="25" font-weight="700" fill="#161d1a">Cortex-MCP</text>
-        </svg>
-        <span class="sr-only">Cortex-MCP</span>
-      </a>
-      <nav class="site-nav" aria-label="Primary Navigation">
-        <a href="index.html">Home</a>
-        <a href="studio.html">Studio</a>
-        <a href="proof.html" class="active">Benchmarks</a>
-        <a href="rules.html">MCP &amp; Rules</a>
-        <a href="docs.html">Docs</a>
-        <a href="https://github.com/codesphere-u/cortex-mcp">GitHub</a>
-      </nav>
-    </header>
-
-    <main>
-      <p class="hero-kicker">Reproducible Evidence</p>
-      <h1 class="hero-title" style="font-size:2rem;">Observed Benchmark &amp; Demo Metrics</h1>
-      <p style="color:var(--muted);margin-bottom:20px;">All measurements below come directly from running <code>cortex-mcp benchmark</code> and <code>cortex-mcp demo</code> locally on the current release.</p>
-
-      <div class="handy-card">
-        <h2 style="font-family:Georgia,serif;margin:0 0 10px;font-size:1.25rem;"><code>cortex-mcp benchmark</code> (500 Facts &middot; 100 Episodes &middot; 60 Entities)</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Operation</th>
-              <th>Sample Size</th>
-              <th>P50 Latency</th>
-              <th>P95 Latency</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td><code>record_episode</code></td><td>100 episodes</td><td>0.004 ms</td><td>0.008 ms</td></tr>
-            <tr><td><code>upsert_fact</code> (with supersession)</td><td>500 facts</td><td>0.004 ms</td><td>0.006 ms</td></tr>
-            <tr><td><code>traverse_subgraph</code> (2-hop)</td><td>60 entities</td><td>0.158 ms</td><td>0.227 ms</td></tr>
-            <tr><td><code>compile_context</code> (800 tok budget)</td><td>50 queries</td><td>5.750 ms</td><td>7.410 ms</td></tr>
-            <tr><td><code>verify_integrity</code> (600 SHA-256 + Merkle)</td><td>1 full pass</td><td>1.756 ms</td><td>1.756 ms</td></tr>
-          </tbody>
-        </table>
-        <p style="margin:0;font-size:0.88rem;color:var(--muted);">
-          Active Facts: <strong>350</strong> &middot; Superseded Facts: <strong>150</strong> &middot; Stale-Fact Suppression: <strong>100.0%</strong> &middot; Token-Budget Compliance: <strong>100.0%</strong>
-        </p>
-      </div>
-
-      <div class="handy-card soft">
-        <h2 style="font-family:Georgia,serif;margin:0 0 10px;font-size:1.25rem;"><code>cortex-mcp demo</code> Bi-Temporal Supersession Output</h2>
-        <p style="font-size:0.9rem;color:var(--muted);">
-          Across <strong>3 entities</strong>, <strong>6 active facts</strong>, <strong>2 superseded stale facts</strong> (<code>JWT_HS256</code> superseded by <code>PASETO_v4_public</code>; <code>HMAC_SHA256_SHARED_SECRET</code> superseded by <code>Ed25519_Asymmetric_Keypair</code>), and <strong>4 episodes</strong>:
-        </p>
-        <ul>
-          <li>Compiled token usage: <strong>307 / 320 tokens (95.9%)</strong></li>
-          <li>Suppressed stale facts: <strong>2 excluded (0% leak)</strong></li>
-        </ul>
-        <pre><code>cortex-mcp benchmark --json
-cortex-mcp demo --json
-cortex-mcp audit-contradictions --auto-resolve</code></pre>
-      </div>
-    </main>
-
-    <footer class="site-footer">
-      <span>Cortex-MCP v1.2.0 &middot; MIT License</span>
-      <div class="footer-links">
-        <a href="index.html">Home</a>
-        <a href="studio.html">Studio</a>
-        <a href="docs.html">Docs</a>
-      </div>
-    </footer>
+  <div class="announcement-bar">
+    <span class="pill-tag">Verified Proof</span>
+    <span>Reproducible measurements from <code>cortex-mcp benchmark</code>, <code>cortex-mcp demo</code>, and 108 unit/integration tests.</span>
+    <a href="docs.html#install">Run Locally &rarr;</a>
   </div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand-link" href="index.html">
+        <img class="brand-icon" src="favicon.svg" alt="" width="30" height="30" />
+        <span>Cortex-MCP</span>
+        <span class="version-chip">v1.2.0</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Primary Navigation">
+        <a href="index.html">Overview</a>
+        <a href="studio.html">Memory Studio</a>
+        <a href="rules.html">Tools &amp; Rules</a>
+        <a href="proof.html" class="active">Benchmarks</a>
+        <a href="docs.html">Docs</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button type="button" class="search-trigger" data-open-search aria-label="Search documentation">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>Search...</span>
+          <kbd>&#8984;K</kbd>
+        </button>
+        <button id="themeToggleBtn" type="button" class="icon-btn" aria-label="Toggle color theme"></button>
+        <a class="icon-btn" href="https://github.com/codesphere-u/cortex-mcp" aria-label="GitHub repository">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        </a>
+        <a class="btn btn-primary btn-sm" href="docs.html#client-setup">Connect MCP</a>
+        <button id="mobileMenuBtn" type="button" class="icon-btn mobile-menu-btn" aria-label="Open menu" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+    <nav id="mobileDrawer" class="mobile-drawer" aria-label="Mobile Navigation">
+      <a href="index.html">Overview</a>
+      <a href="studio.html">Memory Studio</a>
+      <a href="rules.html">Tools &amp; Rules</a>
+      <a href="proof.html" class="active">Benchmarks</a>
+      <a href="docs.html">Documentation</a>
+      <a href="docs.html#client-setup">Connect MCP Client</a>
+      <a href="https://github.com/codesphere-u/cortex-mcp">GitHub Repository</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="page-hero">
+      <span class="pill-tag">Reproducible Evidence</span>
+      <h1>Observed Benchmarks &amp; Architectural Proof</h1>
+      <p>Every latency figure and suppression metric below comes directly from executing <code>cortex-mcp benchmark</code> and <code>cortex-mcp demo</code> locally on v1.2.0.</p>
+    </section>
+
+    <div class="grid-4" style="margin-bottom:28px;">
+      <div class="stat-card">
+        <div class="stat-value">100.0%</div>
+        <div class="stat-label">Stale-Fact Suppression</div>
+        <div class="stat-sub">150 retired facts excluded</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">100.0%</div>
+        <div class="stat-label">Budget Compliance</div>
+        <div class="stat-sub">0 overruns across 50 queries</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">108</div>
+        <div class="stat-label">Passing Tests</div>
+        <div class="stat-sub">pytest -v (zero mocks needed)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">0</div>
+        <div class="stat-label">Cloud Vector DBs</div>
+        <div class="stat-sub">Zero external API keys</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:28px;align-items:start;">
+      <section class="card">
+        <h2 style="margin:0 0 14px;font-size:1.15rem;">Operation Latency Distribution (P50)</h2>
+        <p style="margin:0 0 18px;font-size:0.86rem;color:var(--muted);">500 temporal facts &middot; 150 supersessions &middot; 100 episodes &middot; 60 entities.</p>
+
+        <div class="bench-bar-row">
+          <div class="bench-bar-meta"><code>record_episode</code><span class="mono">0.004 ms</span></div>
+          <div class="bench-bar-track"><div class="bench-bar-fill" style="width:1%;"></div></div>
+        </div>
+        <div class="bench-bar-row">
+          <div class="bench-bar-meta"><code>upsert_fact (supersede)</code><span class="mono">0.004 ms</span></div>
+          <div class="bench-bar-track"><div class="bench-bar-fill" style="width:1%;"></div></div>
+        </div>
+        <div class="bench-bar-row">
+          <div class="bench-bar-meta"><code>traverse_subgraph (2-hop)</code><span class="mono">0.158 ms</span></div>
+          <div class="bench-bar-track"><div class="bench-bar-fill" style="width:4%;"></div></div>
+        </div>
+        <div class="bench-bar-row">
+          <div class="bench-bar-meta"><code>verify_integrity (600 SHA-256)</code><span class="mono">1.756 ms</span></div>
+          <div class="bench-bar-track"><div class="bench-bar-fill" style="width:31%;"></div></div>
+        </div>
+        <div class="bench-bar-row" style="margin-bottom:0;">
+          <div class="bench-bar-meta"><code>compile_context (800 tok)</code><span class="mono">5.750 ms</span></div>
+          <div class="bench-bar-track"><div class="bench-bar-fill" style="width:100%;"></div></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 style="margin:0 0 14px;font-size:1.15rem;">Benchmark Summary Table</h2>
+        <div class="table-wrap" style="margin:0;">
+          <table>
+            <thead>
+              <tr>
+                <th>Operation</th>
+                <th>Samples</th>
+                <th>P50 (ms)</th>
+                <th>P95 (ms)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><code>record_episode</code></td><td>100</td><td>0.004</td><td>0.008</td></tr>
+              <tr><td><code>upsert_fact</code></td><td>500</td><td>0.004</td><td>0.006</td></tr>
+              <tr><td><code>traverse_subgraph</code></td><td>60</td><td>0.158</td><td>0.227</td></tr>
+              <tr><td><code>compile_context</code></td><td>50</td><td>5.750</td><td>7.410</td></tr>
+              <tr><td><code>verify_integrity</code></td><td>1</td><td>1.756</td><td>1.756</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-bottom:28px;">
+      <h2 style="margin:0 0 10px;font-size:1.15rem;">Reproduce Locally via CLI</h2>
+      <p style="margin:0 0 12px;font-size:0.88rem;color:var(--muted);">
+        In <code>cortex-mcp demo</code>: across 3 entities, 6 active facts, 2 superseded stale facts (<code>JWT_HS256</code> &rarr; <code>PASETO_v4_public</code>; <code>HMAC_SHA256_SHARED_SECRET</code> &rarr; <code>Ed25519_Asymmetric_Keypair</code>), compiled context packs into <strong>307 / 320 tokens (95.9%)</strong> with <strong>0% stale leak</strong>.
+      </p>
+      <div class="code-card" style="margin:0;">
+        <div class="code-header">
+          <span class="code-lang"><span class="code-dots"><i></i><i></i><i></i></span>bash</span>
+          <button type="button" class="copy-btn" data-copy-target="codeBenchCmd">Copy</button>
+        </div>
+        <pre><code id="codeBenchCmd"><span class="tok-f">cortex-mcp</span> benchmark <span class="tok-k">--json</span>
+<span class="tok-f">cortex-mcp</span> demo <span class="tok-k">--json</span>
+<span class="tok-f">cortex-mcp</span> audit-contradictions <span class="tok-k">--auto-resolve</span></code></pre>
+      </div>
+    </section>
+
+    <section class="grid-2">
+      <article class="card">
+        <span class="pill-tag" style="margin-bottom:10px;">ADR-01</span>
+        <h3>Bi-Temporal Supersession over Append-Only RAG</h3>
+        <p>Every <code>TemporalFact</code> tracks <code>valid_from</code>, <code>valid_until</code>, and <code>superseded_by</code>. Upserting a <code>singular=True</code> predicate atomically retires prior values while retaining historical time travel.</p>
+      </article>
+      <article class="card">
+        <span class="pill-tag cyan" style="margin-bottom:10px;">ADR-02</span>
+        <h3>Hybrid BM25 + 2-Hop Activation over Embeddings</h3>
+        <p>Code-aware tokenization splits <code>CamelCase</code> and <code>snake_case</code> identifiers, boosts exact matches, activates 2-hop neighbors, and packs deterministically in sub-6ms without cloud embedding calls.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a class="brand-link" href="index.html" style="margin-bottom:10px;">
+            <img class="brand-icon" src="favicon.svg" alt="" width="28" height="28" />
+            <span>Cortex-MCP</span>
+          </a>
+          <p style="font-size:0.84rem;color:var(--muted);margin:0;max-width:290px;">
+            Local-first bi-temporal knowledge graph, contradiction auditor, and token-budgeted context compiler for AI coding agents.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="index.html">Overview</a></li>
+            <li><a href="studio.html">Memory Studio</a></li>
+            <li><a href="rules.html">Tools &amp; Rules</a></li>
+            <li><a href="proof.html">Benchmarks</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Documentation</h4>
+          <ul>
+            <li><a href="docs.html#install">Quickstart</a></li>
+            <li><a href="docs.html#client-setup">MCP Client Setup</a></li>
+            <li><a href="docs.html#transports">Transports Guide</a></li>
+            <li><a href="docs.html#cli">CLI Reference</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Deployments</h4>
+          <ul>
+            <li><a href="https://cortex-mcp-steel.vercel.app">Vercel Developer Portal</a></li>
+            <li><a href="https://cortex-mcp-steel.vercel.app/health">Gateway Health Probe</a></li>
+            <li><a href="https://github.com/codesphere-u/cortex-mcp">GitHub Repository</a></li>
+            <li><a href="https://github.com/codesphere-u/cortex-mcp/releases/tag/v1.2.0">Release v1.2.0</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>For Agents</h4>
+          <ul>
+            <li><a href="llms.txt">llms.txt</a></li>
+            <li><a href="llms-full.txt">llms-full.txt</a></li>
+            <li><a href="sitemap.xml">sitemap.xml</a></li>
+            <li><a href="robots.txt">robots.txt</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>Cortex-MCP v1.2.0 &middot; MIT License &middot; Akandwanaho Ivan Alvin &middot; Codesphere Innovations (U) Limited</span>
+        <div class="footer-agent-links">
+          <span>MCP 2024-11-05</span>
+          <span>&middot;</span>
+          <a href="llms.txt">Agent Index</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="cmdBackdrop" class="cmd-backdrop" role="dialog" aria-modal="true" aria-label="Search Cortex-MCP documentation">
+    <div class="cmd-dialog">
+      <div class="cmd-input-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="cmdSearchInput" type="search" placeholder="Search tools, MCP client setup, CLI commands, rules..." autocomplete="off" />
+        <kbd style="font-size:0.72rem;padding:2px 6px;border-radius:5px;border:1px solid var(--line);color:var(--muted);">ESC</kbd>
+      </div>
+      <div id="cmdResults" class="cmd-results"></div>
+    </div>
+  </div>
+
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script src="app.js"></script>
 </body>

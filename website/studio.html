@@ -12,105 +12,239 @@
   <meta property="og:image" content="https://codesphere-u.github.io/cortex-mcp/og-image.svg" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="page-col">
-    <header class="site-header">
-      <a class="brand-mark" href="index.html">
-        <svg class="brand-mascot" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-          <rect width="64" height="64" rx="16" fill="#064e3b"/>
-          <path d="M18 32h28M32 16v32" stroke="#d1fae5" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
-          <path d="M18 32c6-12 22-12 28 0" stroke="#059669" stroke-width="3.5" stroke-linecap="round"/>
-          <path d="M18 32c6 12 22 12 28 0" stroke="#d97706" stroke-width="3.5" stroke-linecap="round"/>
-          <circle cx="18" cy="32" r="5" fill="#d1fae5" stroke="#059669" stroke-width="2.5"/>
-          <circle cx="32" cy="18" r="5" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>
-          <circle cx="46" cy="32" r="5" fill="#d1fae5" stroke="#059669" stroke-width="2.5"/>
-          <circle cx="32" cy="46" r="4" fill="#059669"/>
-        </svg>
-        <svg class="brand-wordmark-svg" width="196" height="36" viewBox="0 0 196 36" role="img" aria-label="Cortex-MCP">
-          <text x="98" y="27" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="25" font-weight="700" fill="#161d1a">Cortex-MCP</text>
-        </svg>
-        <span class="sr-only">Cortex-MCP</span>
+  <div class="announcement-bar">
+    <span class="pill-tag cyan">Interactive Studio</span>
+    <span>Simulate bi-temporal supersession, <code>as_of</code> time travel, and TruthGate export right in your browser.</span>
+    <a href="https://cortex-mcp-steel.vercel.app">Try Live Vercel JSON-RPC Gateway &nearr;</a>
+  </div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand-link" href="index.html">
+        <img class="brand-icon" src="favicon.svg" alt="" width="30" height="30" />
+        <span>Cortex-MCP</span>
+        <span class="version-chip">v1.2.0</span>
       </a>
-      <nav class="site-nav" aria-label="Primary Navigation">
-        <a href="index.html">Home</a>
-        <a href="studio.html" class="active">Studio</a>
+
+      <nav class="nav-links" aria-label="Primary Navigation">
+        <a href="index.html">Overview</a>
+        <a href="studio.html" class="active">Memory Studio</a>
+        <a href="rules.html">Tools &amp; Rules</a>
         <a href="proof.html">Benchmarks</a>
-        <a href="rules.html">MCP &amp; Rules</a>
         <a href="docs.html">Docs</a>
-        <a href="https://github.com/codesphere-u/cortex-mcp">GitHub</a>
       </nav>
-    </header>
 
-    <main>
-      <p class="hero-kicker">Interactive Simulator</p>
-      <h1 class="hero-title" style="font-size:2rem;">Bi-Temporal &amp; Contradiction Studio</h1>
-      <p style="color:var(--muted);margin-bottom:20px;">Switch scenarios, travel across valid-time dates, toggle automatic conflict supersession, and inspect TruthGate <code>SourceDocument</code> output.</p>
+      <div class="nav-actions">
+        <button type="button" class="search-trigger" data-open-search aria-label="Search documentation">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>Search...</span>
+          <kbd>&#8984;K</kbd>
+        </button>
+        <button id="themeToggleBtn" type="button" class="icon-btn" aria-label="Toggle color theme"></button>
+        <a class="icon-btn" href="https://github.com/codesphere-u/cortex-mcp" aria-label="GitHub repository">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        </a>
+        <a class="btn btn-primary btn-sm" href="docs.html#client-setup">Connect MCP</a>
+        <button id="mobileMenuBtn" type="button" class="icon-btn mobile-menu-btn" aria-label="Open menu" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+    <nav id="mobileDrawer" class="mobile-drawer" aria-label="Mobile Navigation">
+      <a href="index.html">Overview</a>
+      <a href="studio.html" class="active">Memory Studio</a>
+      <a href="rules.html">Tools &amp; Rules</a>
+      <a href="proof.html">Benchmarks</a>
+      <a href="docs.html">Documentation</a>
+      <a href="docs.html#client-setup">Connect MCP Client</a>
+      <a href="https://github.com/codesphere-u/cortex-mcp">GitHub Repository</a>
+    </nav>
+  </header>
 
-      <div class="handy-card">
-        <div class="preset-bar">
-          <button type="button" class="preset-chip active" data-preset="supersession">Auth Supersession + Polarity</button>
-          <button type="button" class="preset-chip" data-preset="antonym">Antonym + Alias Drift</button>
-          <button type="button" class="preset-chip" data-preset="briefing">Clean 2-Hop Briefing</button>
+  <main class="container">
+    <section class="page-hero">
+      <span class="pill-tag">Interactive Workbench</span>
+      <h1>Bi-Temporal Memory &amp; Contradiction Studio</h1>
+      <p>
+        Switch engineering scenarios, rewind across <code>as_of</code> timestamps, inject antonym conflicts, toggle <code>auto_resolve=True</code>, and inspect live TruthGate <code>SourceDocument</code> exports.
+      </p>
+    </section>
+
+    <div class="preset-bar">
+      <button type="button" class="preset-chip active" data-preset="supersession">Auth Supersession + Polarity</button>
+      <button type="button" class="preset-chip" data-preset="antonym">Antonym + Alias Drift</button>
+      <button type="button" class="preset-chip" data-preset="briefing">Clean 2-Hop Briefing</button>
+      <button type="button" class="preset-chip" data-preset="migration">Postgres &amp; Cache Migration</button>
+    </div>
+
+    <div class="grid-2" style="align-items:start;">
+      <!-- Left Column: Inputs + Live Graph Topology -->
+      <section class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+          <h2 style="margin:0;font-size:1.08rem;">Graph State &amp; Query Parameters</h2>
+          <button id="studioAddConflictBtn" type="button" class="btn btn-secondary btn-sm">+ Inject Conflict Pair</button>
         </div>
 
-        <div class="studio-grid" style="margin-bottom:14px;">
+        <div class="grid-2" style="gap:12px;margin-bottom:12px;">
           <div>
             <label class="field-label" for="studioQuery">Context Query</label>
-            <input id="studioQuery" class="handy-input" type="text" />
+            <input id="studioQuery" class="ui-input" type="text" />
           </div>
           <div>
             <label class="field-label" for="studioAsOf">Time-Travel Snapshot (<code>as_of</code>)</label>
-            <select id="studioAsOf" class="handy-select">
+            <select id="studioAsOf" class="ui-select">
               <option value="2026-01-15">2026-01-15 (Initial State)</option>
               <option value="2026-02-20">2026-02-20 (Post PASETO Migration)</option>
-              <option value="2026-03-15" selected>2026-03-15 (Current Head)</option>
+              <option value="2026-03-15" selected>2026-03-15 (Mid-Cycle Head)</option>
+              <option value="2026-04-25">2026-04-25 (Latest Head)</option>
             </select>
           </div>
         </div>
 
-        <div class="studio-grid" style="margin-bottom:14px;">
+        <div class="grid-2" style="gap:12px;margin-bottom:16px;align-items:end;">
           <div>
-            <label class="field-label" for="studioBudget">Token Budget (240 &ndash; 1200)</label>
-            <input id="studioBudget" class="handy-input" type="number" min="240" max="1200" step="40" value="320" />
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <label class="field-label" for="studioBudget">Token Budget</label>
+              <span id="studioBudgetVal" class="mono" style="font-size:0.78rem;color:var(--emerald-bright);">320 tok</span>
+            </div>
+            <input id="studioBudget" type="range" min="240" max="1200" step="40" value="320" style="width:100%;accent-color:var(--emerald);" />
           </div>
-          <div style="display:flex;align-items:flex-end;gap:12px;">
-            <label style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;cursor:pointer;">
-              <input id="studioAutoResolve" type="checkbox" />
-              Enable <code>auto_resolve=True</code>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:2px;">
+            <label style="display:flex;align-items:center;gap:8px;font-size:0.84rem;font-weight:600;cursor:pointer;">
+              <input id="studioAutoResolve" type="checkbox" style="accent-color:var(--emerald);width:16px;height:16px;" />
+              <code>auto_resolve=True</code>
             </label>
-            <button id="studioRunBtn" type="button" class="btn-primary btn-sm">Run Audit</button>
+            <button id="studioRunBtn" type="button" class="btn btn-primary btn-sm">Run Audit</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span class="field-label" style="margin:0;">Live Graph Edge Topology</span>
+            <span class="mono" style="font-size:0.72rem;color:var(--muted);">Green=Active &middot; Amber=Superseded &middot; Red=Conflict</span>
+          </div>
+          <div style="background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:10px;">
+            <svg id="studioGraphSvg" width="100%" viewBox="0 0 600 210" role="img" aria-label="Live fact edge topology diagram"></svg>
           </div>
         </div>
 
         <label class="field-label" for="studioFactsJson">Temporal Facts Graph (Editable JSON)</label>
-        <textarea id="studioFactsJson" class="handy-textarea"></textarea>
-      </div>
-
-      <section class="handy-card soft">
-        <h2 style="font-family:Georgia,serif;margin:0 0 12px;font-size:1.25rem;">Compiled Context &amp; Contradiction Audit</h2>
-        <div id="studioOutput"></div>
+        <textarea id="studioFactsJson" class="ui-textarea"></textarea>
       </section>
 
-      <section class="handy-card">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
-          <h2 style="font-family:Georgia,serif;margin:0;font-size:1.15rem;">TruthGate <code>GroundedSourceDocument</code> Export</h2>
-          <button type="button" class="copy-mini" onclick="copyText(document.getElementById('studioTruthGateOut').textContent)">Copy JSON</button>
+      <!-- Right Column: Tabbed Audit / Compiled Context / TruthGate Export -->
+      <section class="card">
+        <div class="preset-bar" style="margin-bottom:14px;">
+          <button type="button" class="preset-chip active" data-studio-tab="audit">Audit &amp; Active Facts</button>
+          <button type="button" class="preset-chip" data-studio-tab="markdown">Compiled Context</button>
+          <button type="button" class="preset-chip" data-studio-tab="truthgate">TruthGate JSON</button>
         </div>
-        <pre id="studioTruthGateOut"></pre>
-      </section>
-    </main>
 
-    <footer class="site-footer">
-      <span>Cortex-MCP v1.2.0 &middot; MIT License</span>
-      <div class="footer-links">
-        <a href="index.html">Home</a>
-        <a href="proof.html">Benchmarks</a>
-        <a href="docs.html">Docs</a>
+        <div data-studio-pane="audit" style="display:block;">
+          <div id="studioOutput"></div>
+        </div>
+
+        <div data-studio-pane="markdown" style="display:none;">
+          <div class="code-card" style="margin:0;">
+            <div class="code-header">
+              <span class="code-lang"><span class="code-dots"><i></i><i></i><i></i></span>markdown</span>
+              <button type="button" class="copy-btn" data-copy-target="studioCompiledMd">Copy Markdown</button>
+            </div>
+            <pre id="studioCompiledMd" style="min-height:240px;white-space:pre-wrap;"></pre>
+          </div>
+        </div>
+
+        <div data-studio-pane="truthgate" style="display:none;">
+          <div class="code-card" style="margin:0;">
+            <div class="code-header">
+              <span class="code-lang"><span class="code-dots"><i></i><i></i><i></i></span>json</span>
+              <button type="button" class="copy-btn" data-copy-target="studioTruthGateOut">Copy JSON</button>
+            </div>
+            <pre id="studioTruthGateOut" style="min-height:240px;"></pre>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a class="brand-link" href="index.html" style="margin-bottom:10px;">
+            <img class="brand-icon" src="favicon.svg" alt="" width="28" height="28" />
+            <span>Cortex-MCP</span>
+          </a>
+          <p style="font-size:0.84rem;color:var(--muted);margin:0;max-width:290px;">
+            Local-first bi-temporal knowledge graph, contradiction auditor, and token-budgeted context compiler for AI coding agents.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="index.html">Overview</a></li>
+            <li><a href="studio.html">Memory Studio</a></li>
+            <li><a href="rules.html">Tools &amp; Rules</a></li>
+            <li><a href="proof.html">Benchmarks</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Documentation</h4>
+          <ul>
+            <li><a href="docs.html#install">Quickstart</a></li>
+            <li><a href="docs.html#client-setup">MCP Client Setup</a></li>
+            <li><a href="docs.html#transports">Transports Guide</a></li>
+            <li><a href="docs.html#cli">CLI Reference</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Deployments</h4>
+          <ul>
+            <li><a href="https://cortex-mcp-steel.vercel.app">Vercel Developer Portal</a></li>
+            <li><a href="https://cortex-mcp-steel.vercel.app/health">Gateway Health Probe</a></li>
+            <li><a href="https://github.com/codesphere-u/cortex-mcp">GitHub Repository</a></li>
+            <li><a href="https://github.com/codesphere-u/cortex-mcp/releases/tag/v1.2.0">Release v1.2.0</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>For Agents</h4>
+          <ul>
+            <li><a href="llms.txt">llms.txt</a></li>
+            <li><a href="llms-full.txt">llms-full.txt</a></li>
+            <li><a href="sitemap.xml">sitemap.xml</a></li>
+            <li><a href="robots.txt">robots.txt</a></li>
+          </ul>
+        </div>
       </div>
-    </footer>
+
+      <div class="footer-bottom">
+        <span>Cortex-MCP v1.2.0 &middot; MIT License &middot; Akandwanaho Ivan Alvin &middot; Codesphere Innovations (U) Limited</span>
+        <div class="footer-agent-links">
+          <span>MCP 2024-11-05</span>
+          <span>&middot;</span>
+          <a href="llms.txt">Agent Index</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="cmdBackdrop" class="cmd-backdrop" role="dialog" aria-modal="true" aria-label="Search Cortex-MCP documentation">
+    <div class="cmd-dialog">
+      <div class="cmd-input-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="cmdSearchInput" type="search" placeholder="Search tools, MCP client setup, CLI commands, rules..." autocomplete="off" />
+        <kbd style="font-size:0.72rem;padding:2px 6px;border-radius:5px;border:1px solid var(--line);color:var(--muted);">ESC</kbd>
+      </div>
+      <div id="cmdResults" class="cmd-results"></div>
+    </div>
   </div>
+
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script src="app.js"></script>
 </body>

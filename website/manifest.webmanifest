@@ -5,8 +5,8 @@
   "start_url": "/cortex-mcp/",
   "scope": "/cortex-mcp/",
   "display": "standalone",
-  "background_color": "#fffdf2",
-  "theme_color": "#059669",
+  "background_color": "#090c10",
+  "theme_color": "#10b981",
   "icons": [
     {
       "src": "favicon.svg",
