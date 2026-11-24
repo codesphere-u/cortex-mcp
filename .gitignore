@@ -10,3 +10,10 @@ venv/
 .DS_Store
 *.tmp
 .vercel
+
+# Coverage & type-checker caches
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
